@@ -10,9 +10,10 @@ const pool = new Pool({
 });
 
 module.exports = {
-    query: async (text, params) => {
+    query: async (text, params = []) => {
         try {
-            await pool.query(text, params);
+            const result = await pool.query(text, params);
+            return result;
         } catch (error) {
             console.error('Database Error: ', error);
             throw error;
