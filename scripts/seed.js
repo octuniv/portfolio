@@ -1,8 +1,8 @@
 const { Client } = require('../config/db.js');
 const {
     users,
-    normalContents,
-    portfolioContents
+    paragraphs,
+    portfolios
 } = require('../app/lib/placeholder-data.js');
 
 const { v4: uuidv4 } = require('uuid'); 
@@ -17,24 +17,24 @@ async function seedUsers() {
             CREATE TABLE IF NOT EXISTS users (
             id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            address TEXT NOT NULL,
-            phone TEXT NOT NULL
+            email VARCHAR(255) NOT NULL UNIQUE,
+            address VARCHAR(255) NOT NULL,
+            phone VARCHAR(255) NOT NULL
             );
         `);
 
         console.log(`Created "users" table`);
 
         const queryText = `
-          INSERT INTO users (id, name, email, address, phone)
-          VALUES ($1, $2, $3, $4, $5)
+          INSERT INTO users (name, email, address, phone)
+          VALUES ($1, $2, $3, $4)
           ON CONFLICT (id) DO NOTHING;
         `
 
         const insertedUsers = await Promise.all(
             users.map(
                 async (user) => {
-                    params = [uuidv4(), user.name, user.email, user.address, user.phone];
+                    params = [user.name, user.email, user.address, user.phone];
                     await client.query(queryText, params);
                 }
             )
@@ -52,32 +52,32 @@ async function seedUsers() {
       }
 }
 
-async function seedNormalContents() {
+async function seedParagraphs() {
     const client = Client();
     await client.connect();
     try {
         await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
 
         const createTable = await client.query(`
-            CREATE TABLE IF NOT EXISTS normalContents (
+            CREATE TABLE IF NOT EXISTS paragraphs (
             id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-            title TEXT NOT NULL,
+            title VARCHAR(255) NOT NULL,
             content TEXT NOT NULL
             );
         `);
 
-        console.log(`Created "normalContents" table`);
+        console.log(`Created "paragraphs" table`);
 
         const queryText = `
-          INSERT INTO normalContents (id, title, content)
-          VALUES ($1, $2, $3)
+          INSERT INTO paragraphs (title, content)
+          VALUES ($1, $2)
           ON CONFLICT (id) DO NOTHING;
         `
 
-        const insertedNormalContents = await Promise.all(
-            normalContents.map(
+        const insertedParagraphs = await Promise.all(
+            paragraphs.map(
                 async (nC) => {
-                    params = [uuidv4(), nC.title, nC.content];
+                    params = [nC.title, nC.content];
                     await client.query(queryText, params);
                 }
             )
@@ -85,17 +85,17 @@ async function seedNormalContents() {
 
         return {
             createTable,
-            normalContents: insertedNormalContents,
+            paragraphs: insertedParagraphs,
         }
     } catch (error) {
-        console.error('Error seeding normalContents:', error);
+        console.error('Error seeding paragraphs:', error);
         throw error;
       } finally {
         await client.end();
       }
 }
 
-async function seedPortfolioContents() {
+async function seedPortfolios() {
     const client = Client();
     await client.connect();
 
@@ -106,12 +106,12 @@ async function seedPortfolioContents() {
         const createPortfolioTable = await client.query(`
             CREATE TABLE IF NOT EXISTS portfolios (
             id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-            title TEXT NOT NULL
+            title VARCHAR(255) NOT NULL
             );
         `);
 
         const createParagraphsTable = await client.query(`
-            CREATE TABLE IF NOT EXISTS paragraphs (
+            CREATE TABLE IF NOT EXISTS paragraphsInPortfolio (
             id SERIAL PRIMARY KEY,
             intro TEXT NOT NULL,
             content TEXT NOT NULL,
@@ -119,7 +119,7 @@ async function seedPortfolioContents() {
             );
         `);
 
-        console.log(`Created "portfolioContents" table`);
+        console.log(`Created "portfolios" table`);
 
         const portfolioQueryText = `
             INSERT INTO portfolios (id, title)
@@ -128,12 +128,12 @@ async function seedPortfolioContents() {
         `;
 
         const paragraphQueryText = `
-            INSERT INTO paragraphs (intro, content, portfolio_id)
+            INSERT INTO paragraphsInPortfolio (intro, content, portfolio_id)
             VALUES ($1, $2, $3);
         `
 
         const insertedPortfolios = await Promise.all(
-            portfolioContents.map(
+            portfolios.map(
                 async (pfC) => {
                     const portfolioId = uuidv4();
                     const params = [portfolioId, pfC.title];
@@ -160,7 +160,7 @@ async function seedPortfolioContents() {
         }
 
     } catch (error) {
-        console.error('Error seeding PortfolioContents:', error);
+        console.error('Error seeding portfolios:', error);
         await client.query('ROLLBACK');
         throw error;
     } finally {
@@ -170,8 +170,8 @@ async function seedPortfolioContents() {
 
 async function main() {
     await seedUsers();
-    await seedNormalContents();
-    await seedPortfolioContents();
+    await seedParagraphs();
+    await seedPortfolios();
 }
 
 main().catch((err) => {

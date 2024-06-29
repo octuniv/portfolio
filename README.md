@@ -17,9 +17,9 @@ dotenv 16.4.5 prettier 3.3.2
 
 2. install postgresql (https://www.postgresql.org/download/)
 
-3. converted name .env.example to .env, and set your DB info
+3. convert name .env.example to .env, and set your DB info
 
-4. execute order "pnpm seed" (only once)
+4. execute "pnpm seed" (only once)
 
 ## Getting Started
 

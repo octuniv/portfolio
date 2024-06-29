@@ -7,14 +7,14 @@ const users = [
     }
 ];
 
-const normalContents = [
+const paragraphs = [
     {
         title: "Example",
         content: "Example 1^|^Example 2^|^Example 3"
     }
 ];
 
-const portfolioContents = [
+const portfolios = [
     {
         title: "portfolio Example",
         paragraphs: [
@@ -32,6 +32,6 @@ const portfolioContents = [
 
 module.exports = {
     users,
-    normalContents,
-    portfolioContents
+    paragraphs,
+    portfolios
 };

@@ -7,3 +7,9 @@ export type User = {
     address: string,
     phone: string
 };
+
+export type Paragraph = {
+    id: string,
+    title: string,
+    content: string[]
+};

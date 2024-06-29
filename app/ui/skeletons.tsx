@@ -10,3 +10,9 @@ export function ProfileSkeleton() {
         </>
     )
 }
+
+export function ParagraphSkeleton() {
+    return (
+        <p>fetching Data......</p>
+    )
+}
