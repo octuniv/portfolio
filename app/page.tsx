@@ -1,12 +1,16 @@
 import Paragraphs from "./ui/paragraphs";
-import { ParagraphSkeleton } from "./ui/skeletons";
+import { ParagraphSkeleton } from "./ui/paragraphs";
 import { Suspense } from "react";
+import Portfolios, { PortfolioSkeleton } from "./ui/portfolios";
 
 export default function Home() {
   return (
     <>
       <Suspense fallback={<ParagraphSkeleton />}>
-        <Paragraphs /> 
+        <Paragraphs />
+      </Suspense>
+      <Suspense fallback={<PortfolioSkeleton />}>
+        <Portfolios />
       </Suspense>
     </>
   );

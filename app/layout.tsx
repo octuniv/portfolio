@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import "@/app/ui/globals.css";
 import Profile from "./ui/profile";
 import { Suspense } from "react";
-import { ProfileSkeleton } from "./ui/skeletons";
+import { ProfileSkeleton } from "./ui/profile";
 
 const inter = Inter({ subsets: ["latin"] });
 

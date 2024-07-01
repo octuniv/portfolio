@@ -1,5 +1,18 @@
 import { fetchUser } from "../lib/data";
 
+export function ProfileSkeleton() {
+    const keys = ['name', 'email', 'address', 'phone'];
+    return (
+        <>
+            {
+                keys.map((key) => (
+                    <p key={key}>{key} : loading...</p>
+                ))
+            }
+        </>
+    )
+}
+
 export default async function Profile() {
     const user = await fetchUser();
     const keys = ['name', 'email', 'address', 'phone'];
