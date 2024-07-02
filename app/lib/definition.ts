@@ -19,18 +19,24 @@ export type ParagraphInPf = {
     content: string[]
 };
 
+export type ParagraphDB = {
+    id: string,
+    title: string,
+    content: string
+}
+
 export type Portfolio = {
     id: string,
     title: string,
     paragraphs: ParagraphInPf[]
 };
 
-export type PfInDB = {
+export type PortfolioDB = {
     id: string,
     title: string
 }
 
-export type PgInDB = {
+export type PgInPFDB = {
     id: number,
     intro: string,
     content: string,

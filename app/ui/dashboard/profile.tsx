@@ -1,4 +1,4 @@
-import { fetchUser } from "../lib/data";
+import { fetchUser } from "@/app/lib/data";
 
 export function ProfileSkeleton() {
     const keys = ['name', 'email', 'address', 'phone'];

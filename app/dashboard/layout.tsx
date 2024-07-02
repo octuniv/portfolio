@@ -1,5 +1,5 @@
-import Profile from "@/app/ui/profile";
-import { ProfileSkeleton } from "@/app/ui/profile";
+import Profile from "@/app/ui/dashboard/profile";
+import { ProfileSkeleton } from "@/app/ui/dashboard/profile";
 import { Suspense } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {

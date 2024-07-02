@@ -3,11 +3,13 @@
 1. install dependencies from pnpm (about below)
 
 dependencies:
+@heroicons/react 2.1.4
 next 14.2.4
 pg 8.12.0
 react 18.3.1
 react-dom 18.3.1
 uuid 10.0.0
+zod 3.23.8
 
 devDependencies:
 @types/node 20.14.9 eslint 8.57.0 prettier-plugin-tailwindcss 0.6.5

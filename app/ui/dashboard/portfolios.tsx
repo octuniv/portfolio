@@ -1,5 +1,6 @@
-import { fetchPortfolios } from "../lib/data";
-import { ParagraphInPf, Portfolio as PortfolioType } from "../lib/definition";
+import { fetchPortfolios } from "@/app/lib/data";
+import { ParagraphInPf, Portfolio as PortfolioType } from "@/app/lib/definition";
+import { EditPortfolio } from "./buttons";
 
 export function PortfolioSkeleton() {
     return <p>Loading Portfolios......</p>
@@ -25,6 +26,9 @@ function Portfolio({id, title, paragraphs}: PortfolioType) {
                     content={pg['content']}
                 />
             ))}
+            <div className="flex justify-end, gap-2">
+                <EditPortfolio id={id} />
+            </div>
         </div>
     )
 }
