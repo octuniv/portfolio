@@ -2,8 +2,9 @@
 
 import { updateParagraph } from "@/app/lib/action";
 import { Paragraph } from "@/app/lib/definition";
-import { useState, useActionState, ChangeEvent } from "react";
-import { Button } from "../../button";
+import { Button } from "@/app/ui/button";
+import { useState, useActionState, ChangeEvent, MouseEvent } from "react";
+import Link from "next/link";
 
 export default function EditParagraph({
     paragraph
@@ -16,18 +17,23 @@ export default function EditParagraph({
 
     const [content, setContent] = useState(paragraph.content);
 
+    console.log(content);
+
     const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault();
         const { value } = event.target;
         const nextCt = [...content];
         nextCt[index] = value;
         setContent(nextCt);
     };
 
-    const handleAddClick = () => {
+    const handleAddClick = (event: MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
         setContent([...content, '']);
     };
 
-    const handleRemoveClick = (index: number) => {
+    const handleRemoveClick = (index: number, event: MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
         const nextCt = [...content];
         nextCt.splice(index, 1);
         setContent(nextCt);
@@ -57,7 +63,7 @@ export default function EditParagraph({
                 <label>content</label>
                 {
                     content.map((ct, i) => (
-                        <div key={i}>
+                        <div key={`${i} - ${ct}`}>
                             <input 
                                 id="content"
                                 name="content"
@@ -65,15 +71,28 @@ export default function EditParagraph({
                                 onChange={event => handleInputChange(i, event)}
                                 placeholder="enter content"
                             />
-                            <Button onClick={() => handleRemoveClick(i)}>Remove</Button>
-                            {content.length - 1 === i && (
-                                <Button onClick={handleAddClick}>Add</Button>
-                            )}
+                            <Button onClick={e => handleRemoveClick(i, e)}>Remove</Button>
                         </div>
                     ))
                 }
+                <Button onClick={e => handleAddClick(e)}>Add</Button>
+                <div id="paragraph-error" aria-live="polite" aria-atomic="true">
+                    {state?.errors?.content?.map((error: string) => (
+                        <p className="mt-2 text-sm text-red-500" key={error}>
+                        {error}
+                      </p>
+                    ))}
+                </div>
             </div>
-            <Button type="submit">Edit Paragraph</Button>
+            <div className="mt-6 flex justify-end gap-4">
+                <Link
+                    href="/dashboard"
+                    className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+                >
+                    Cancel
+                </Link>
+                <Button type="submit">Edit Paragraph</Button>
+            </div>
         </form>
     );
 }

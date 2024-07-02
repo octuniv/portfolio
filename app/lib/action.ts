@@ -32,7 +32,7 @@ const EditParagraph = paragraphSchema.omit({ id: true });
 export async function updateParagraph(id: string, prevState: State, formData: FormData) {
     const validatedFields = EditParagraph.safeParse({
         title: formData.get('title'),
-        content: formData.get('content'),
+        content: formData.getAll('content'),
     });
 
     if (!validatedFields.success) {
