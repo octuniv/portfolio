@@ -1,13 +1,14 @@
 import { query } from '@/config/db';
 import { 
-    Paragraph, 
+    Paragraph,
+    ParagraphDB,
     sepLetter, 
     ParagraphInPf,
     Portfolio, 
-    PfInDB, 
-    PgInDB 
+    PortfolioDB, 
+    PgInPFDB 
 } from './definition';
-import { pgDBToPg, sleep } from './util';
+import { convertDBToPage, sleep } from './util';
 
 export async function fetchUser() {
     const queryText = `SELECT * FROM users`;
@@ -24,6 +25,7 @@ export async function fetchUser() {
 }
 
 export async function fetchParagraphs() {
+    const { convParagraph } = convertDBToPage(); 
     const queryText = `SELECT * FROM paragraphs`;
     try {
         const queryRes = await query(queryText);
@@ -31,12 +33,8 @@ export async function fetchParagraphs() {
         if (!queryRes?.rows) return [];
 
         const result: Paragraph[] = queryRes.rows.map(
-            (res: { id: string; title: string; content: string; }) => {
-            return {
-                id: res.id,
-                title: res.title,
-                content: res.content.split(sepLetter)
-            }
+            (res: ParagraphDB) => {
+            return convParagraph(res)
         });
         return result;
     } catch (error) {
@@ -58,9 +56,9 @@ export async function fetchPortfolios() {
 
         const pgQuery = await query(queryTexts['paragraphs']);
 
-        const portfolios: PfInDB[] = pfQuery.rows;
+        const portfolios: PortfolioDB[] = pfQuery.rows;
 
-        const paragraphs: PgInDB[] = pgQuery.rows;
+        const paragraphs: PgInPFDB[] = pgQuery.rows;
 
         const result: Portfolio[] = [];
 
@@ -72,7 +70,10 @@ export async function fetchPortfolios() {
             while (rIdx < paragraphs.length) {
                 const pg = paragraphs[rIdx];
                 if (pg['portfolio_id'] !== pf['id']) break;
-                pgInPf.push(pgDBToPg(pg));
+                pgInPf.push({
+                    intro: pg.intro.split(sepLetter),
+                    content: pg.content.split(sepLetter)
+                });
                 rIdx += 1;
             }
             result.push({
@@ -87,5 +88,17 @@ export async function fetchPortfolios() {
     } catch (error) {
         console.error('fetch Portfolios Error :', Error);
         return [];
+    }
+}
+
+export async function fetchParagraphById(id : string) {
+    const { convParagraph } = convertDBToPage(); 
+    const queryText = `SELECT * from paragraphs WHERE id = $1`;
+    try {
+        const queryRes = await query(queryText, [id]);
+        return convParagraph(queryRes.rows[0]);
+    } catch (error) {
+        console.error('fetch Paragrah By #%d is Error', id);
+        return null;
     }
 }

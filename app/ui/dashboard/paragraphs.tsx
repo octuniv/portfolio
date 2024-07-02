@@ -1,5 +1,6 @@
-import { fetchParagraphs } from "../lib/data";
-import { Paragraph } from "../lib/definition";
+import { fetchParagraphs } from "@/app/lib/data";
+import { Paragraph } from "@/app/lib/definition";
+import { EditParagraph } from "./buttons";
 
 export function ParagraphSkeleton() {
     return (
@@ -14,6 +15,9 @@ function ParagraphComponent({id, title, content} : Paragraph) {
             {content.map((c, ind) => (
                 <p key={ind}>{c}</p>
             ))}
+            <div className="flex justify-end, gap-2">
+                <EditParagraph id={id} />
+            </div>
         </div>
     )
 }

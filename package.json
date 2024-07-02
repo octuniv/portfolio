@@ -10,23 +10,26 @@
     "seed": "node scripts/seed.js"
   },
   "dependencies": {
-    "next": "14.2.4",
+    "@heroicons/react": "^2.1.4",
+    "clsx": "^2.1.1",
+    "next": "15.0.0-rc.0",
     "pg": "^8.12.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "uuid": "^10.0.0"
+    "react": "19.0.0-rc-6230622a1a-20240610",
+    "react-dom": "19.0.0-rc-6230622a1a-20240610",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/node": "20.14.8",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
     "dotenv": "^16.4.5",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.4",
-    "postcss": "^8",
+    "eslint": "^9.6.0",
+    "eslint-config-next": "15.0.0-rc.0",
+    "postcss": "^8.4.39",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.5",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "tailwindcss": "3.4.4",
+    "typescript": "5.5.2"
   }
 }
