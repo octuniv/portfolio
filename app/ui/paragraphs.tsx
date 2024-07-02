@@ -1,6 +1,5 @@
 import { fetchParagraphs } from "../lib/data";
 import { Paragraph } from "../lib/definition";
-import EmptyData from "./emptyData";
 
 export function ParagraphSkeleton() {
     return (
@@ -10,7 +9,7 @@ export function ParagraphSkeleton() {
 
 function ParagraphComponent({id, title, content} : Paragraph) {
     return (
-        <div>
+        <div className="my-6">
             <p>title : {title}</p>
             {content.map((c, ind) => (
                 <p key={ind}>{c}</p>
@@ -21,8 +20,6 @@ function ParagraphComponent({id, title, content} : Paragraph) {
 
 export default async function Paragraphs() {
     const paras = await fetchParagraphs();
-
-    if (!Array.isArray(paras) || !paras.length) return <EmptyData />;
     
     return (
         <>

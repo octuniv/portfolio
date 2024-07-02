@@ -18,7 +18,7 @@ export default async function Profile() {
     const keys = ['name', 'email', 'address', 'phone'];
 
     return (
-        <>
+        <div className="my-6">
             {
                 keys.map(
                     (key) => {
@@ -28,6 +28,6 @@ export default async function Profile() {
                     }
                 )
             }
-        </>
+        </div>
     );
 }
