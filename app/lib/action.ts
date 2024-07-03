@@ -10,11 +10,10 @@ const paragraphSchema = z.object({
     id: z.string(),
     title: z.coerce
     .string()
-    .min(1, { message: 'Please enter title.'}),
+    .min(1, { message: `Don't empty title.`}),
     content: z.array(
         z.coerce.
-        string().
-        min(1, { message: `Don't empty content space.`})
+        string()
     )
     .nonempty({message : `Don't you enter your content?`})
 });
@@ -32,7 +31,7 @@ const EditParagraph = paragraphSchema.omit({ id: true });
 export async function updateParagraph(id: string, prevState: State, formData: FormData) {
     const validatedFields = EditParagraph.safeParse({
         title: formData.get('title'),
-        content: formData.getAll('content'),
+        content: formData.getAll('content').filter((ct) => typeof ct === 'string' && ct.length > 0),
     });
 
     if (!validatedFields.success) {
@@ -60,4 +59,50 @@ export async function updateParagraph(id: string, prevState: State, formData: Fo
 
     revalidatePath(`/dashboard`);
     redirect(`/dashboard`);
+}
+
+export async function createParagraph(prevState: State, formData: FormData) {
+    const validatedFields = EditParagraph.safeParse({
+        title: formData.get('title'),
+        content: formData.getAll('content').filter((ct) => typeof ct === 'string' && ct.length > 0),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to create Paragraph.',
+        }
+    }
+
+    const id = ''; // Database make id on this paragraph.
+    const { title, content } = validatedFields.data;
+    const { convParagraph } = convertPageToDB();
+    const params = convParagraph({ id, title, content });
+
+    const queryText = `
+        INSERT INTO paragraphs (title, content)
+        VALUES ($1, $2)
+    `;
+
+    try {
+        await query(queryText, [params.title, params.content]);
+    } catch (error) {
+        return { message: 'Database Error: Failed to create paragraph' };
+    }
+
+    revalidatePath(`/dashboard`);
+    redirect(`/dashboard`);
+}
+
+export async function deleteParagraph(id: string) {
+    const queryText = `DELETE FROM paragraphs WHERE id = $1`;
+    const params = [id];
+
+    try {
+        await query(queryText, params);
+    } catch (error) {
+        console.error('Database Error : Failed to delete paragraph');
+        throw Error;
+    }
+    revalidatePath(`/dashboard`);
 }

@@ -26,7 +26,7 @@ export async function fetchUser() {
 
 export async function fetchParagraphs() {
     const { convParagraph } = convertDBToPage(); 
-    const queryText = `SELECT * FROM paragraphs`;
+    const queryText = `SELECT id, title, content FROM paragraphs ORDER BY sequence ASC`;
     try {
         const queryRes = await query(queryText);
 
@@ -45,7 +45,7 @@ export async function fetchParagraphs() {
 
 export async function fetchPortfolios() {
     const queryTexts = {
-        portfolios: `SELECT * FROM portfolios ORDER BY id`,
+        portfolios: `SELECT id, title FROM portfolios ORDER BY sequence`,
         paragraphs: `SELECT * FROM paragraphsinportfolio ORDER BY portfolio_id, id`
     };
     

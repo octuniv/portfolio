@@ -1,6 +1,6 @@
 import { fetchParagraphs } from "@/app/lib/data";
 import { Paragraph } from "@/app/lib/definition";
-import { EditParagraph } from "./buttons";
+import { CreateParagraph, DeleteParagraph, EditParagraph } from "@/app/ui/dashboard/buttons";
 
 export function ParagraphSkeleton() {
     return (
@@ -15,8 +15,9 @@ function ParagraphComponent({id, title, content} : Paragraph) {
             {content.map((c, ind) => (
                 <p key={ind}>{c}</p>
             ))}
-            <div className="flex justify-end, gap-2">
+            <div className="flex justify-end gap-8">
                 <EditParagraph id={id} />
+                <DeleteParagraph id={id} />
             </div>
         </div>
     )
@@ -35,6 +36,7 @@ export default async function Paragraphs() {
                     content={para.content}
                 />
             ))}
+            <CreateParagraph />
         </>
     );
 }

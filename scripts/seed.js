@@ -61,6 +61,7 @@ async function seedParagraphs() {
         const createTable = await client.query(`
             CREATE TABLE IF NOT EXISTS paragraphs (
             id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+            sequence SERIAL,
             title VARCHAR(255) NOT NULL,
             content TEXT NOT NULL
             );
@@ -106,6 +107,7 @@ async function seedPortfolios() {
         const createPortfolioTable = await client.query(`
             CREATE TABLE IF NOT EXISTS portfolios (
             id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+            sequence SERIAL,
             title VARCHAR(255) NOT NULL
             );
         `);

@@ -1,6 +1,5 @@
 import { fetchParagraphById } from "@/app/lib/data";
-import { Paragraph } from "@/app/lib/definition";
-import Form from "@/app/ui/dashboard/edit/edit-parag";
+import EditForm from "@/app/ui/dashboard/edit/editParag";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -10,7 +9,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
     return (
         <main>
-            <Form paragraph={paragraph}/>
+            <EditForm paragraph={paragraph}/>
         </main>
     );
 }
