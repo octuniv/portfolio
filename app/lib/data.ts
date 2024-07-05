@@ -71,6 +71,7 @@ export async function fetchPortfolios() {
                 const pg = paragraphs[rIdx];
                 if (pg['portfolio_id'] !== pf['id']) break;
                 pgInPf.push({
+                    id: pg.id,
                     intro: pg.intro.split(sepLetter),
                     content: pg.content.split(sepLetter)
                 });
@@ -102,3 +103,8 @@ export async function fetchParagraphById(id : string) {
         return null;
     }
 }
+
+// export async function fetchPortfolioById(id: string) {
+//     const pfQuery = `SELECT id, title from portfolios WHERE id = $1`;
+//     const pgQuery = `SELECT id, intro, content from paragraphsinportfolio WHERE portfolio_id = $1 ORDER BY id`;
+// }

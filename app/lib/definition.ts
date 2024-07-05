@@ -15,6 +15,7 @@ export type Paragraph = {
 };
 
 export type ParagraphInPf = {
+    id: number
     intro: string[],
     content: string[]
 };

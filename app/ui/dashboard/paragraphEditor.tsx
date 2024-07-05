@@ -2,14 +2,11 @@
 
 import { Paragraph } from "@/app/lib/definition";
 import Link from "next/link";
-import { ChangeEvent, MouseEvent, useState, useCallback } from "react";
+import { FocusEvent, MouseEvent, useState } from "react";
 import { Button } from "@/app/ui/button";
-import { State as paragraphState } from "@/app/lib/action";
-import { cyrb53 as hasher } from "@/app/lib/util";
-import { debounce } from "lodash";
+import { ParagraphState as ErrorState } from "@/app/lib/action";
 
-const makeKey = (content: string, index: number) =>
-  hasher(`${content}-${index}`);
+const makeKey = (index: number) => String(Date.now() * 10 + index);
 
 export default function ParagraphEditor({
   paragraph,
@@ -17,27 +14,32 @@ export default function ParagraphEditor({
   formAction,
 }: {
   paragraph: Paragraph;
-  state: paragraphState;
+  state: ErrorState;
   formAction: (payload: FormData) => void;
 }) {
-  const [content, setContent] = useState(paragraph.content);
-
-  console.log(content);
-
-  const handleInputChange = debounce(
-    (index: number, event: ChangeEvent<HTMLInputElement>) => {
-      event.preventDefault();
-      const { value } = event.target;
-      const nextCt = [...content];
-      nextCt[index] = value;
-      setContent(nextCt);
-    },
-    200
+  const [content, setContent] = useState(
+    paragraph.content.map((ct, i) => {
+      return {
+        content: ct,
+        key: makeKey(i),
+      };
+    })
   );
+
+  const handleInputBlur = (
+    index: number,
+    event: FocusEvent<HTMLInputElement>
+  ) => {
+    event.preventDefault();
+    const { value } = event.target;
+    const nextCt = [...content];
+    nextCt[index]["content"] = value;
+    setContent(nextCt);
+  };
 
   const handleAddClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    setContent([...content, ""]);
+    setContent([...content, { content: "", key: makeKey(content.length) }]);
   };
 
   const handleRemoveClick = (
@@ -70,18 +72,22 @@ export default function ParagraphEditor({
       <div>
         <label>content</label>
         {content.map((ct, i) => (
-          <div key={makeKey(ct, i)}>
+          <div key={ct["key"]}>
             <input
               id="content"
               name="content"
-              defaultValue={ct}
-              onChange={(event) => handleInputChange(i, event)}
+              defaultValue={ct["content"]}
+              onBlur={(e) => handleInputBlur(i, e)}
               placeholder="enter content"
             />
-            <Button onClick={(e) => handleRemoveClick(i, e)}>Remove</Button>
+            <Button type="button" onClick={(e) => handleRemoveClick(i, e)}>
+              Remove
+            </Button>
           </div>
         ))}
-        <Button onClick={(e) => handleAddClick(e)}>Add</Button>
+        <Button type="button" onClick={(e) => handleAddClick(e)}>
+          Add
+        </Button>
         <div id="paragraph-error" aria-live="polite" aria-atomic="true">
           {state?.errors?.content?.map((error: string) => (
             <p className="mt-2 text-sm text-red-500" key={error}>
