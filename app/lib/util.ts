@@ -2,7 +2,9 @@ import {
     Paragraph, 
     ParagraphDB, 
     ParagraphInPf, 
-    PgInPFDB, 
+    PgInPFDB,
+    Portfolio,
+    PortfolioDB, 
     sepLetter 
 } from "@/app/lib/definition";
 
@@ -36,7 +38,21 @@ export function convertDBToPage() {
         };
     };
 
-    return { convParagraph };
+    const convPortfolio = (pfData: PortfolioDB, pgDatas: PgInPFDB[]): Portfolio => {
+        return {
+            id: pfData.id,
+            title: pfData.title,
+            paragraphs: pgDatas.map(pg => {
+                return {
+                    id: pg.id,
+                    intro: pg.intro.split(sepLetter),
+                    content: pg.content.split(sepLetter)
+                }
+            })
+        }
+    }
+
+    return { convParagraph, convPortfolio };
 }
 
 export function convertPageToDB() { 

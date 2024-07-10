@@ -3,7 +3,7 @@ import {
   ParagraphInPf,
   Portfolio as PortfolioType,
 } from "@/app/lib/definition";
-import { CreatePortfolio, EditPortfolio } from "./buttons";
+import { CreatePortfolio, DeletePortfolio, EditPortfolio } from "./buttons";
 
 export function PortfolioSkeleton() {
   return <p>Loading Portfolios......</p>;
@@ -31,6 +31,7 @@ function Portfolio({ id, title, paragraphs }: PortfolioType) {
       ))}
       <div className="flex justify-end, gap-2">
         <EditPortfolio id={id} />
+        <DeletePortfolio id={id} />
       </div>
     </div>
   );

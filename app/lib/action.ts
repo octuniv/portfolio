@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { convertPageToDB } from "./util";
-import { query } from "@/config/db";
+import { query, Client } from "@/config/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from 'uuid';
@@ -127,6 +127,31 @@ const PortfolioSchema = z.object({
     .nonempty({message : `Don't you enter your contents?`})
 });
 
+export async function deletePortfolio(id: string) {
+    const queryParags = `DELETE FROM paragraphsinportfolio WHERE portfolio_id = $1`
+    const queryPf= `DELETE FROM portfolios WHERE id = $1`;
+    const params = [id];
+
+    const client = Client();
+
+    try {
+        await client.connect();
+        await client.query('BEGIN');
+        await client.query(queryParags, params);
+        await client.query(queryPf, params);
+        await client.query('COMMIT');
+    } catch (error) {
+        console.error('Error deleting portfolio:', error);
+        await client.query('ROLLBACK');
+        throw error;
+    } finally {
+        await client.end();
+    }
+    revalidatePath(`/dashboard`);
+}
+
+
+
 export type PortfolioState = {
     errors?: {
         title?: string[];
@@ -140,37 +165,18 @@ export type PortfolioState = {
 
 const EditPortfolio = PortfolioSchema.omit({ id: true });
 
-export async function createPortfolio(prevState: PortfolioState, formData: FormData) {
-    console.log(formData);
-    return { message: 'Incomplete' };
-    // const validatedFields = EditPortfolio.safeParse({
-    //     title: formData.get('title'),
-    //     content: formData.getAll('content').filter((ct) => typeof ct === 'string' && ct.length > 0),
-    // });
+export async function createPortfolio() {
+    const queryText = `INSERT INTO portfolios (title) values ('NEW')`;
 
-    // if (!validatedFields.success) {
-    //     return {
-    //         errors: validatedFields.error.flatten().fieldErrors,
-    //         message: 'Missing Fields. Failed to create Portfolio.',
-    //     }
-    // }
+    try {
+        await query(queryText);
+    } catch (error) {
+        console.error('You can`t create portfolio because of db errors' );
+        throw error;
+    }
+    revalidatePath(`/dashboard`);
+}
 
-    // const id = ''; // Database make id on this paragraph.
-    // const { title, content } = validatedFields.data;
-    // const { convParagraph } = convertPageToDB();
-    // const params = convParagraph({ id, title, content });
-
-    // const queryText = `
-    //     INSERT INTO paragraphs (title, content)
-    //     VALUES ($1, $2)
-    // `;
-
-    // try {
-    //     await query(queryText, [params.title, params.content]);
-    // } catch (error) {
-    //     return { message: 'Database Error: Failed to create paragraph' };
-    // }
-
-    // revalidatePath(`/dashboard`);
-    // redirect(`/dashboard`);
+export async function updatePortfolio(id: string, prevState: PortfolioState, formData: FormData) {
+    return { message: 'not defined'};
 }

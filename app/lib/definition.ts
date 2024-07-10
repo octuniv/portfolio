@@ -34,7 +34,8 @@ export type Portfolio = {
 
 export type PortfolioDB = {
     id: string,
-    title: string
+    title: string,
+    sequence: number
 }
 
 export type PgInPFDB = {

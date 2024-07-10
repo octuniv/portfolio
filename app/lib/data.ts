@@ -45,7 +45,7 @@ export async function fetchParagraphs() {
 
 export async function fetchPortfolios() {
     const queryTexts = {
-        portfolios: `SELECT id, title FROM portfolios ORDER BY sequence`,
+        portfolios: `SELECT id, title, sequence FROM portfolios ORDER BY id`,
         paragraphs: `SELECT * FROM paragraphsinportfolio ORDER BY portfolio_id, id`
     };
     
@@ -58,6 +58,11 @@ export async function fetchPortfolios() {
 
         const portfolios: PortfolioDB[] = pfQuery.rows;
 
+        const mapIdToSeq: Map<string, number> = portfolios.reduce((acc, cur) => {
+            acc.set(cur.id, cur.sequence);
+            return acc;
+        }, new Map());
+
         const paragraphs: PgInPFDB[] = pgQuery.rows;
 
         const result: Portfolio[] = [];
@@ -65,7 +70,7 @@ export async function fetchPortfolios() {
         let rIdx = 0;
 
         for (const pf of portfolios) {
-            if (rIdx >= paragraphs.length) break;
+            // if (rIdx >= paragraphs.length) break;
             const pgInPf: ParagraphInPf[] = [];
             while (rIdx < paragraphs.length) {
                 const pg = paragraphs[rIdx];
@@ -83,6 +88,15 @@ export async function fetchPortfolios() {
                 paragraphs: pgInPf
             });
         }
+
+        result.sort((r1, r2) => {
+            const sr1 = mapIdToSeq.get(r1.id);
+            const sr2 = mapIdToSeq.get(r2.id);
+            if (typeof sr1 == 'undefined' || typeof sr2 == 'undefined') {
+                throw Error('DB Error...... find undefined Id');
+            }
+            return sr1 - sr2;
+        })
 
         return result;
 
@@ -104,7 +118,18 @@ export async function fetchParagraphById(id : string) {
     }
 }
 
-// export async function fetchPortfolioById(id: string) {
-//     const pfQuery = `SELECT id, title from portfolios WHERE id = $1`;
-//     const pgQuery = `SELECT id, intro, content from paragraphsinportfolio WHERE portfolio_id = $1 ORDER BY id`;
-// }
+export async function fetchPortfolioById(id: string) {
+    const pfQuery = `SELECT id, title from portfolios WHERE id = $1`;
+    const pgQuery = `SELECT id, intro, content from paragraphsinportfolio WHERE portfolio_id = $1 ORDER BY id`;
+    const { convPortfolio } = convertDBToPage();
+    try {
+        const pfById = await query(pfQuery, [id]);
+        if (!pfById) return null;
+        const pgById = await query(pgQuery, [id]);
+        return convPortfolio(pfById.rows, pgById.rows);
+
+    } catch (error) {
+        console.error(`fetch Portfolio By #%d is Error`, id);
+        return null;
+    }
+}
