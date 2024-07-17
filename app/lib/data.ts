@@ -8,7 +8,7 @@ import {
     PortfolioDB, 
     PgInPFDB 
 } from './definition';
-import { convertDBToPage, sleep } from './util';
+import { convertDBToPage, convertDBToPfParag, sleep } from './util';
 
 export async function fetchUser() {
     const queryText = `SELECT * FROM users`;
@@ -126,10 +126,35 @@ export async function fetchPortfolioById(id: string) {
         const pfById = await query(pfQuery, [id]);
         if (!pfById) return null;
         const pgById = await query(pgQuery, [id]);
-        return convPortfolio(pfById.rows, pgById.rows);
+        return convPortfolio(pfById.rows[0], pgById.rows);
 
     } catch (error) {
         console.error(`fetch Portfolio By #%d is Error`, id);
+        return null;
+    }
+}
+
+export async function fetchPfTitleById(id: string) {
+    const queryText = `SELECT title from portfolios WHERE id = $1`;
+    try {
+        const ret = await query(queryText, [id]);
+        if (!ret) return null;
+        return ret.rows[0]['title'];
+    } catch (error) {
+        console.error(`fetch PfTitle By #%d is Error`, id);
+        return null;
+    }
+}
+
+export async function fetchPfParagById(pfId: string, pgId: number) {
+    const queryText = `SELECT intro, content from paragraphsinportfolio WHERE portfolio_id = $1 AND id = $2`;
+
+    try {
+        const ret = await query(queryText, [pfId, pgId]);
+        if (!ret) return null;
+        return convertDBToPfParag(ret.rows[0]);
+    } catch (error) {
+        console.error(`fetch Portfolio paragraph By #%d and #%d is Error`, pfId, pgId);
         return null;
     }
 }

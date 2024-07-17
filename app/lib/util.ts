@@ -66,3 +66,37 @@ export function convertPageToDB() {
 
     return { convParagraph };
 }
+
+export function convertDBToPfParag(
+    {
+        intro,
+        content
+    } :
+    {
+        intro: string,
+        content: string
+    }
+) {
+    return {
+        intro: intro.split(sepLetter),
+        content: content.split(sepLetter)
+    };
+}
+
+export function convertPfParagToDB(
+    {
+        intro,
+        content
+    } :
+    {
+        intro: string[],
+        content: string[]
+    }
+) {
+    return {
+        intro: intro.join(sepLetter),
+        content: content.join(sepLetter)
+    }
+}
+
+export const makeKey = (index: number) => String(Date.now() * 10 + index);

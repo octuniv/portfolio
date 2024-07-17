@@ -1,11 +1,10 @@
 'use server';
 
 import { z } from "zod";
-import { convertPageToDB } from "./util";
+import { convertPageToDB, convertPfParagToDB } from "./util";
 import { query, Client } from "@/config/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { v4 as uuidv4 } from 'uuid';
 
 const paragraphSchema = z.object({
     id: z.string(),
@@ -108,25 +107,6 @@ export async function deleteParagraph(id: string) {
     revalidatePath(`/dashboard`);
 }
 
-const writing = z.object({
-    intro: z.array(
-        z.coerce.string()
-    ).nonempty({message: `Don't empty intro`}),
-    content: z.array(
-        z.coerce.string()
-    ).nonempty({message: `Don't empty content`}),
-    portfolio_id: z.string().min(1)
-});
-
-const PortfolioSchema = z.object({
-    id: z.string(),
-    title: z.coerce
-    .string()
-    .min(1, { message: `Don't empty title.`}),
-    portfolios: z.array(writing)
-    .nonempty({message : `Don't you enter your contents?`})
-});
-
 export async function deletePortfolio(id: string) {
     const queryParags = `DELETE FROM paragraphsinportfolio WHERE portfolio_id = $1`
     const queryPf= `DELETE FROM portfolios WHERE id = $1`;
@@ -150,21 +130,6 @@ export async function deletePortfolio(id: string) {
     revalidatePath(`/dashboard`);
 }
 
-
-
-export type PortfolioState = {
-    errors?: {
-        title?: string[];
-        paragraphs?: {
-            intro?: string[],
-            content?: string[]
-        };
-    };
-    message?: string | null;
-};
-
-const EditPortfolio = PortfolioSchema.omit({ id: true });
-
 export async function createPortfolio() {
     const queryText = `INSERT INTO portfolios (title) values ('NEW')`;
 
@@ -177,6 +142,121 @@ export async function createPortfolio() {
     revalidatePath(`/dashboard`);
 }
 
-export async function updatePortfolio(id: string, prevState: PortfolioState, formData: FormData) {
-    return { message: 'not defined'};
+export async function addPfParagraph(id : string) {
+    const queryText = `INSERT INTO paragraphsinportfolio (intro, content, portfolio_id) values ('NEW', 'NEW', $1)`;
+
+    try {
+        await query(queryText, [id]);
+    } catch (error) {
+        console.error('You can`t Add PfParagraph because of db errors' );
+        throw error;
+    }
+    revalidatePath(`/dashboard/edit/portfolio/${id}`);
+}
+
+export type PfTitleState = {
+    errors?: {
+        title?: string[];
+    };
+    message?: string | null;
+};
+
+const PfTitleSchema = z.object({
+    id: z.string(),
+    title: z.coerce.
+    string().
+    min(1, { message: `Don't empty title.`}),
+});
+
+const EditPfTitle = PfTitleSchema.omit({ id: true });
+
+export async function updatePfTitle(pfId: string, prevState: PfTitleState, formData: FormData) {
+    const validatedFields = EditPfTitle.safeParse({
+        title: formData.get('title'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Update PfTitle.',
+        }
+    }
+
+    const { title } = validatedFields.data;
+
+    const queryText = `
+        UPDATE portfolios
+        SET title = $1
+        WHERE id = $2
+    `;
+
+    try {
+        await query(queryText, [title, pfId]);
+    } catch (error) {
+        return { message: 'Database Error: Failed to update PfTitle' };
+    }
+
+    const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
+
+    revalidatePath(returnAddress);
+    redirect(returnAddress);
+    
+}
+
+export type PfParagState = {
+    errors?: {
+        intro?: string[];
+        content?: string[];
+    };
+    message?: string | null;
+}
+
+const PfParagSchema = z.object({
+    pfId: z.string(),
+    pgId: z.number(),
+    intro: z.array(
+        z.coerce.
+        string()
+    )
+    .nonempty({message : `Don't you enter your intro?`}),
+    content: z.array(
+        z.coerce.
+        string()
+    )
+    .nonempty({message : `Don't you enter your content?`})
+});
+
+const EditPfParag = PfParagSchema.omit({ pfId: true, pgId: true });
+
+export async function updatePfParag(pfId: string, pgId: number, prevState: PfParagState, formData : FormData) {
+    const validatedFields = EditPfParag.safeParse({
+        intro: formData.getAll('intro').filter((i) => typeof i === 'string' && i.length > 0),
+        content: formData.getAll('content').filter((ct) => typeof ct === 'string' && ct.length > 0),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Update PfParagraph.',
+        }
+    }
+
+    const params = convertPfParagToDB(validatedFields.data);
+
+    const queryText = `
+        UPDATE paragraphsinportfolio
+        SET intro = $1, content = $2
+        WHERE id = $3 AND portfolio_id = $4
+    `;
+
+    try {
+        await query(queryText, [params.intro, params.content, pgId, pfId]);
+    } catch (error) {
+        return { message: 'Database Error: Failed to update PfParag' };
+    }
+
+    const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
+
+    revalidatePath(returnAddress);
+    redirect(returnAddress);
 }

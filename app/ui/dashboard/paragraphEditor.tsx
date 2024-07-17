@@ -5,8 +5,7 @@ import Link from "next/link";
 import { FocusEvent, MouseEvent, useState } from "react";
 import { Button } from "@/app/ui/button";
 import { ParagraphState as ErrorState } from "@/app/lib/action";
-
-const makeKey = (index: number) => String(Date.now() * 10 + index);
+import { makeKey } from "@/app/lib/util";
 
 export default function ParagraphEditor({
   paragraph,
