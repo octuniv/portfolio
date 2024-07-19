@@ -1,5 +1,7 @@
 export const sepLetter = '^|^';
 
+export const userKeys =  ['name', 'email', 'address', 'phone'] as const;
+
 export type User = {
     id: string,
     name: string,

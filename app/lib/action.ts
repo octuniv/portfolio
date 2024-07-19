@@ -5,6 +5,7 @@ import { convertPageToDB, convertPfParagToDB } from "./util";
 import { query, Client } from "@/config/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { User, userKeys } from "./definition";
 
 const paragraphSchema = z.object({
     id: z.string(),
@@ -271,4 +272,53 @@ export async function deletePfParagraph(pfId: string, pgId: number) {
     }
     const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
     revalidatePath(returnAddress);
+}
+
+type UserOmitId = Omit<User, "id">;
+
+export type UserState = {
+    errors?: {
+        [key in keyof UserOmitId]?: string[];
+    };
+    message?: string | null;
+}
+
+const phoneRegex = new RegExp(/^\d{2,3}-\d{3,4}-\d{4}$/);
+
+const UserSchema = z.object({
+    name: z.coerce.string().min(1, { message : "Do not empty your name"}),
+    email : z.coerce.string().email({ message : "Keep the email format"}),
+    address : z.coerce.string().min(1, { message : "Do not empty your address"}),
+    phone: z.coerce.string().regex(phoneRegex, { message : "Keep the phone number format"})
+});
+
+export async function updateUser(id: string, prevState: UserState, formData: FormData) {
+    const validatedFields = UserSchema.safeParse(userKeys.reduce(
+        (acc, cur) => {
+            return {...acc, [cur] : formData.get(cur)}
+        },
+        {}
+    ));
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Update userinfo.',
+        }
+    }
+
+    const params = validatedFields.data;
+    
+    const queryText = `UPDATE users
+        SET name = $1, email = $2, address = $3, phone = $4
+        WHERE id = $5`;
+
+    try {
+        await query(queryText, [params.name, params.email, params.address, params.phone, id]);
+    } catch (error) {
+        return { message : "DB Error : Fail to update userinfo"};
+    }
+
+    revalidatePath(`/dashboard`);
+    redirect(`/dashboard`);
 }

@@ -6,7 +6,8 @@ import {
     ParagraphInPf,
     Portfolio, 
     PortfolioDB, 
-    PgInPFDB 
+    PgInPFDB, 
+    User
 } from './definition';
 import { convertDBToPage, convertDBToPfParag, sleep } from './util';
 
@@ -15,12 +16,12 @@ export async function fetchUser() {
     try {
         const user = await query(queryText);
 
-        if (!user?.rows) return {};
+        if (!user?.rows) throw Error(`You can't find user information!`);
 
-        return user.rows[0];
+        return user.rows[0] satisfies User;
     } catch (error) {
         console.error('fetch User Error :', Error);
-        return {};
+        throw Error;
     }
 }
 

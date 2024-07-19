@@ -14,7 +14,10 @@ import Link from "next/link";
 
 function MakeEditButton({ href }: { href: string }) {
   return (
-    <Link href={href} className="rounded-md border p-2 hover:bg-gray-100">
+    <Link
+      href={href}
+      className="rounded-md border p-2 block w-[2.375rem] hover:bg-gray-100"
+    >
       <PencilSquareIcon className="w-5" />
     </Link>
   );
@@ -123,4 +126,9 @@ export function DeletePfParagraph({
       ButtonShape={DeleteButtonShape}
     />
   );
+}
+
+export function EditUser() {
+  const href = `/dashboard/edit/user`;
+  return <MakeEditButton href={href} />;
 }
