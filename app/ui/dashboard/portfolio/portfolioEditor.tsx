@@ -3,7 +3,7 @@
 import { Portfolio } from "@/app/lib/definition";
 import Link from "next/link";
 import { EditParagraph, EditTitle } from "./portfolioButtons";
-import { AddPfParagraph } from "../buttons";
+import { AddPfParagraph, DeletePfParagraph } from "../buttons";
 import { makeKey } from "@/app/lib/util";
 
 type ParagraphDivType = {
@@ -38,6 +38,7 @@ function ParagraphDiv({
         return <p key={ct.key}>{ct.content}</p>;
       })}
       <EditParagraph id={pfId} pgId={id} />
+      <DeletePfParagraph pfId={pfId} pgId={id} />
     </div>
   );
 }

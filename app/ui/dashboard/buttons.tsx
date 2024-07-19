@@ -2,6 +2,7 @@ import {
   addPfParagraph,
   createPortfolio,
   deleteParagraph,
+  deletePfParagraph,
   deletePortfolio,
 } from "@/app/lib/action";
 import {
@@ -11,13 +12,40 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
-export function EditParagraph({ id }: { id: string }) {
-  const href = `/dashboard/edit/paragraph/${id}`;
+function MakeEditButton({ href }: { href: string }) {
   return (
     <Link href={href} className="rounded-md border p-2 hover:bg-gray-100">
       <PencilSquareIcon className="w-5" />
     </Link>
   );
+}
+
+function MakeFormButton({
+  action,
+  ButtonShape,
+}: {
+  action: () => Promise<void>;
+  ButtonShape: () => JSX.Element;
+}) {
+  return (
+    <form action={action}>
+      <ButtonShape />
+    </form>
+  );
+}
+
+function DeleteButtonShape() {
+  return (
+    <button className="rounded-md border p-2 hover:bg-gray-100">
+      <span className="sr-only">Delete</span>
+      <TrashIcon className="w-5" />
+    </button>
+  );
+}
+
+export function EditParagraph({ id }: { id: string }) {
+  const href = `/dashboard/edit/paragraph/${id}`;
+  return <MakeEditButton href={href} />;
 }
 
 export function CreateParagraph() {
@@ -36,55 +64,63 @@ export function CreateParagraph() {
 export function DeleteParagraph({ id }: { id: string }) {
   const deleteParagraphWithId = deleteParagraph.bind(null, id);
   return (
-    <form action={deleteParagraphWithId}>
-      <button className="rounded-md border p-2 hover:bg-gray-100">
-        <span className="sr-only">Delete</span>
-        <TrashIcon className="w-5" />
-      </button>
-    </form>
+    <MakeFormButton
+      action={deleteParagraphWithId}
+      ButtonShape={DeleteButtonShape}
+    />
   );
 }
 
 export function EditPortfolio({ id }: { id: string }) {
   const href = `/dashboard/edit/portfolio/${id}`;
-  return (
-    <Link href={href} className="rounded-md border p-2 hover:bg-gray-100">
-      <PencilSquareIcon className="w-5" />
-    </Link>
-  );
+  return <MakeEditButton href={href} />;
 }
 
 export function CreatePortfolio() {
-  return (
-    <form action={createPortfolio}>
-      <button className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-        <span className="hidden md:block">Create Portfolio</span>{" "}
-        <PlusIcon className="h-5 md:ml-4" />
-      </button>
-    </form>
+  const createButton = () => (
+    <button className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+      <span className="hidden md:block">Create Portfolio</span>{" "}
+      <PlusIcon className="h-5 md:ml-4" />
+    </button>
   );
+  return <MakeFormButton action={createPortfolio} ButtonShape={createButton} />;
 }
 
 export function DeletePortfolio({ id }: { id: string }) {
   const deletePortfolioWithId = deletePortfolio.bind(null, id);
   return (
-    <form action={deletePortfolioWithId}>
-      <button className="rounded-md border p-2 hover:bg-gray-100">
-        <span className="sr-only">Delete</span>
-        <TrashIcon className="w-5" />
-      </button>
-    </form>
+    <MakeFormButton
+      action={deletePortfolioWithId}
+      ButtonShape={DeleteButtonShape}
+    />
   );
 }
 
 export function AddPfParagraph({ id }: { id: string }) {
   const AddPfParagraphWithId = addPfParagraph.bind(null, id);
+  const addButton = () => (
+    <button className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+      <span className="hidden md:block">Add Board</span>{" "}
+      <PlusIcon className="h-5 md:ml-4" />
+    </button>
+  );
   return (
-    <form action={AddPfParagraphWithId}>
-      <button className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-        <span className="hidden md:block">Add Board</span>{" "}
-        <PlusIcon className="h-5 md:ml-4" />
-      </button>
-    </form>
+    <MakeFormButton action={AddPfParagraphWithId} ButtonShape={addButton} />
+  );
+}
+
+export function DeletePfParagraph({
+  pfId,
+  pgId,
+}: {
+  pfId: string;
+  pgId: number;
+}) {
+  const deletePfParagraphWithId = deletePfParagraph.bind(null, pfId, pgId);
+  return (
+    <MakeFormButton
+      action={deletePfParagraphWithId}
+      ButtonShape={DeleteButtonShape}
+    />
   );
 }

@@ -260,3 +260,15 @@ export async function updatePfParag(pfId: string, pgId: number, prevState: PfPar
     revalidatePath(returnAddress);
     redirect(returnAddress);
 }
+
+export async function deletePfParagraph(pfId: string, pgId: number) {
+    const queryText = `DELETE FROM paragraphsinportfolio WHERE portfolio_id = $1 AND id = $2`;
+    try {
+        await query(queryText, [pfId, pgId]);
+    } catch (error) {
+        console.error('Error deleting paragraph in portfolio:', error);
+        throw error;
+    }
+    const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
+    revalidatePath(returnAddress);
+}
