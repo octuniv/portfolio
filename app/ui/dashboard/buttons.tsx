@@ -1,5 +1,6 @@
 import {
   addPfParagraph,
+  createParagraph,
   createPortfolio,
   deleteParagraph,
   deletePfParagraph,
@@ -37,6 +38,22 @@ function MakeFormButton({
   );
 }
 
+function MakeCreateButton({
+  name,
+  action,
+}: {
+  name: string;
+  action: () => Promise<void>;
+}) {
+  const createButton = () => (
+    <button className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+      <span className="hidden md:block">{name}</span>{" "}
+      <PlusIcon className="h-5 md:ml-4" />
+    </button>
+  );
+  return <MakeFormButton action={action} ButtonShape={createButton} />;
+}
+
 function DeleteButtonShape() {
   return (
     <button className="rounded-md border p-2 hover:bg-gray-100">
@@ -52,15 +69,8 @@ export function EditParagraph({ id }: { id: string }) {
 }
 
 export function CreateParagraph() {
-  const href = `/dashboard/create/paragraph`;
   return (
-    <Link
-      href={href}
-      className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-    >
-      <span className="hidden md:block">Create Paragraph</span>{" "}
-      <PlusIcon className="h-5 md:ml-4" />
-    </Link>
+    <MakeCreateButton name={"Create Paragraph"} action={createParagraph} />
   );
 }
 
@@ -80,13 +90,9 @@ export function EditPortfolio({ id }: { id: string }) {
 }
 
 export function CreatePortfolio() {
-  const createButton = () => (
-    <button className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-      <span className="hidden md:block">Create Portfolio</span>{" "}
-      <PlusIcon className="h-5 md:ml-4" />
-    </button>
+  return (
+    <MakeCreateButton name={"Create Portfolio"} action={createPortfolio} />
   );
-  return <MakeFormButton action={createPortfolio} ButtonShape={createButton} />;
 }
 
 export function DeletePortfolio({ id }: { id: string }) {

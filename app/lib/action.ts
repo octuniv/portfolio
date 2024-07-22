@@ -62,37 +62,16 @@ export async function updateParagraph(id: string, prevState: ParagraphState, for
     redirect(`/dashboard`);
 }
 
-export async function createParagraph(prevState: ParagraphState, formData: FormData) {
-    const validatedFields = EditParagraph.safeParse({
-        title: formData.get('title'),
-        content: formData.getAll('content').filter((ct) => typeof ct === 'string' && ct.length > 0),
-    });
-
-    if (!validatedFields.success) {
-        return {
-            errors: validatedFields.error.flatten().fieldErrors,
-            message: 'Missing Fields. Failed to create Paragraph.',
-        }
-    }
-
-    const id = ''; // Database make id on this paragraph.
-    const { title, content } = validatedFields.data;
-    const { convParagraph } = convertPageToDB();
-    const params = convParagraph({ id, title, content });
-
-    const queryText = `
-        INSERT INTO paragraphs (title, content)
-        VALUES ($1, $2)
-    `;
+export async function createParagraph() {
+    const queryText = `INSERT INTO paragraphs (title, content) values ('NEW', 'NEW')`;
 
     try {
-        await query(queryText, [params.title, params.content]);
+        await query(queryText);
     } catch (error) {
-        return { message: 'Database Error: Failed to create paragraph' };
+        console.error('You can`t create paragraph because of db errors' );
+        throw error;
     }
-
     revalidatePath(`/dashboard`);
-    redirect(`/dashboard`);
 }
 
 export async function deleteParagraph(id: string) {
