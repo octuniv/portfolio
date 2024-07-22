@@ -1,4 +1,3 @@
-import { fetchPortfolios } from "@/app/lib/data";
 import {
   ParagraphInPf,
   Portfolio as PortfolioType,
@@ -22,7 +21,8 @@ function Paragraph({ intro, content }: Omit<ParagraphInPf, "id">) {
   );
 }
 
-function Portfolio({ id, title, paragraphs }: PortfolioType) {
+function Portfolio({ portfolio }: { portfolio: PortfolioType }) {
+  const { id, title, paragraphs } = portfolio;
   return (
     <div className="my-6">
       <p>title:{title}</p>
@@ -37,18 +37,15 @@ function Portfolio({ id, title, paragraphs }: PortfolioType) {
   );
 }
 
-export default async function Portfolios() {
-  const pfs = await fetchPortfolios();
-
+export default async function Portfolios({
+  portfolios,
+}: {
+  portfolios: PortfolioType[];
+}) {
   return (
     <>
-      {pfs.map((pf, ind) => (
-        <Portfolio
-          key={ind}
-          id={pf["id"]}
-          title={pf["title"]}
-          paragraphs={pf["paragraphs"]}
-        />
+      {portfolios.map((pf, ind) => (
+        <Portfolio key={ind} portfolio={pf} />
       ))}
       <CreatePortfolio />
     </>
