@@ -1,7 +1,7 @@
 "use client";
 
 import { PfTitleState } from "@/app/lib/action";
-import { Button } from "@/app/ui/button";
+import { Button } from "@/app/ui/buttonComponent";
 import Link from "next/link";
 
 export default function PortfolioTitle({

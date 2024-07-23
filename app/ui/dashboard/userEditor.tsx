@@ -1,7 +1,61 @@
+"use client";
 import { User, userKeys } from "@/app/lib/definition";
 import { UserState as ErrorState } from "@/app/lib/action";
-import { Button } from "@/app/ui/button";
+import { Button } from "@/app/ui/buttonComponent";
+import { makeKey } from "@/app/lib/util";
+import React, { useState, FocusEvent, MouseEvent } from "react";
 import Link from "next/link";
+
+function EditElem({
+  elemName,
+  defValue,
+  blurFunc,
+}: {
+  elemName: string;
+  defValue: string;
+  blurFunc?: (event: FocusEvent<HTMLInputElement>) => void;
+}) {
+  const onBlur = (event: FocusEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    if (blurFunc) {
+      blurFunc(event);
+    }
+  };
+  return (
+    <div key={elemName} className="my-2">
+      <label>{elemName} : </label>
+      <input
+        id={elemName}
+        name={elemName}
+        defaultValue={defValue}
+        onBlur={onBlur}
+        placeholder={`enter ${elemName}`}
+      />
+    </div>
+  );
+}
+
+function ErrorElem({
+  elemName,
+  errors,
+}: {
+  elemName: string;
+  errors: string[] | undefined;
+}) {
+  if (!errors) return <></>;
+
+  return (
+    <>
+      {errors.map((err) => (
+        <div id={`${elemName}-error`} aria-live="polite" aria-atomic="true">
+          <p className="mt-2 text-sm text-red-500" key={err}>
+            {err}
+          </p>
+        </div>
+      ))}
+    </>
+  );
+}
 
 export default function UserEditor({
   user,
@@ -12,28 +66,60 @@ export default function UserEditor({
   state: ErrorState;
   formAction: (payload: FormData) => void;
 }) {
+  const { name, email, socialSites: defSites } = user;
+  const [socialSites, setSocialSites] = useState(
+    defSites.map((ds, i) => {
+      return { value: ds, key: makeKey(i) };
+    })
+  );
+
+  const handleBlur =
+    (index: number) => (event: FocusEvent<HTMLInputElement>) => {
+      const { value: target } = event.target;
+      const nextSites = [...socialSites];
+      nextSites[index]["value"] = target;
+      setSocialSites(nextSites);
+    };
+
+  const handleRemoveClick = (
+    index: number,
+    event: MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+    setSocialSites((oldValues) => oldValues.filter((_, i) => i !== index));
+  };
+
+  const handleAddClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setSocialSites([
+      ...socialSites,
+      { value: "", key: makeKey(socialSites.length) },
+    ]);
+  };
+
   const returnAddress = "/dashboard";
   return (
     <form action={formAction}>
-      {userKeys.map((key) => (
-        <>
-          <label>{key} : </label>
-          <input
-            id={key}
-            name={key}
-            defaultValue={user[key]}
-            placeholder={`enter ${key}`}
+      <EditElem elemName={"name"} defValue={name} />
+      <ErrorElem elemName={"name"} errors={state?.errors?.name} />
+      <EditElem elemName={"email"} defValue={email} />
+      <ErrorElem elemName={"email"} errors={state?.errors?.email} />
+      {socialSites.map((site, ind) => (
+        <div key={site.key}>
+          <EditElem
+            elemName={"socialSites"}
+            defValue={site.value}
+            blurFunc={handleBlur(ind)}
           />
-          <div id={`${key}-error`} aria-live="polite" aria-atomic="true">
-            {state?.errors?.[key]?.map((error: string) => (
-              <p className="mt-2 text-sm text-red-500" key={error}>
-                {error}
-              </p>
-            ))}
-          </div>
-          <br />
-        </>
+          <Button type="button" onClick={(e) => handleRemoveClick(ind, e)}>
+            Remove
+          </Button>
+        </div>
       ))}
+      <Button type="button" onClick={(e) => handleAddClick(e)}>
+        Add
+      </Button>
+      <ErrorElem elemName={"socialSites"} errors={state?.errors?.socialSites} />
       <div className="mt-6 flex justify-end gap-4">
         <Link
           href={returnAddress}

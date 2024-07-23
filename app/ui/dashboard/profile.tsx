@@ -1,6 +1,12 @@
 import { fetchUser } from "@/app/lib/data";
 import { userKeys } from "@/app/lib/definition";
-import { EditUser } from "./buttons";
+import { EditUser } from "@/app/ui/dashboard/buttons";
+import {
+  CreditCardIcon,
+  EnvelopeIcon,
+  ChatBubbleLeftEllipsisIcon,
+} from "@heroicons/react/24/outline";
+import React from "react";
 
 export function ProfileSkeleton() {
   return (
@@ -12,19 +18,35 @@ export function ProfileSkeleton() {
   );
 }
 
+function IconWithLabel({
+  Icon,
+  label,
+}: {
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  label: string;
+}) {
+  return (
+    <div className="block my-2">
+      <Icon className="inline w-5 mr-2" />
+      <span className="inline">{label}</span>
+    </div>
+  );
+}
+
 export default async function Profile() {
-  const user = await fetchUser();
+  const { name, email, socialSites } = await fetchUser();
 
   return (
     <>
-      <div className="my-6">
-        {userKeys.map((key) => {
-          return (
-            <p key={key}>
-              {key} : {user[key]}
-            </p>
-          );
-        })}
+      <p className="text-4xl font-medium">Résumé</p>
+      <div className="my-6" key="nameEmail">
+        <IconWithLabel Icon={CreditCardIcon} label={name} />
+        <IconWithLabel Icon={EnvelopeIcon} label={email} />
+      </div>
+      <div className="my-6" key="socialSites">
+        {socialSites.map((site) => (
+          <IconWithLabel Icon={ChatBubbleLeftEllipsisIcon} label={site} />
+        ))}
       </div>
       <EditUser />
     </>

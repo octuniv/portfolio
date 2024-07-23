@@ -2,7 +2,11 @@ import {
   ParagraphInPf,
   Portfolio as PortfolioType,
 } from "@/app/lib/definition";
-import { CreatePortfolio, DeletePortfolio, EditPortfolio } from "./buttons";
+import {
+  CreatePortfolio,
+  DeletePortfolio,
+  EditPortfolio,
+} from "@/app/ui/dashboard/buttons";
 
 export function PortfolioSkeleton() {
   return <p>Loading Portfolios......</p>;

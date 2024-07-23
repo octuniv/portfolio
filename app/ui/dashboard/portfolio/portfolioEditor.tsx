@@ -1,10 +1,13 @@
 "use client";
 
 import { Portfolio } from "@/app/lib/definition";
-import Link from "next/link";
-import { EditParagraph, EditTitle } from "./portfolioButtons";
-import { AddPfParagraph, DeletePfParagraph } from "../buttons";
+import {
+  EditParagraph,
+  EditTitle,
+} from "@/app/ui/dashboard/portfolio/portfolioButtons";
+import { AddPfParagraph, DeletePfParagraph } from "@/app/ui/dashboard/buttons";
 import { makeKey } from "@/app/lib/util";
+import Link from "next/link";
 
 type ParagraphDivType = {
   id: number;

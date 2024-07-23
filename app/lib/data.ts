@@ -6,19 +6,19 @@ import {
     ParagraphInPf,
     Portfolio, 
     PortfolioDB, 
-    PgInPFDB, 
-    User
+    PgInPFDB,
+    UserDB
 } from './definition';
-import { convertDBToPage, convertDBToPfParag, sleep } from './util';
+import { convertDBToPage, convertDBToPfParag, getUserFromDB, sleep } from './util';
 
 export async function fetchUser() {
-    const queryText = `SELECT * FROM users`;
+    const queryText = `SELECT id, name, email, socialsites FROM users`;
     try {
         const user = await query(queryText);
-
+        
         if (!user?.rows) throw Error(`You can't find user information!`);
 
-        return user.rows[0] satisfies User;
+        return getUserFromDB(user.rows[0] satisfies UserDB);
     } catch (error) {
         console.error('fetch User Error :', Error);
         throw Error;

@@ -1,7 +1,7 @@
 "use client";
 
 import { PfParagState } from "@/app/lib/action";
-import { Button } from "@/app/ui/button";
+import { Button } from "@/app/ui/buttonComponent";
 import Link from "next/link";
 import {
   useState,

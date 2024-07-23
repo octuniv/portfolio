@@ -5,7 +5,9 @@ import {
     PgInPFDB,
     Portfolio,
     PortfolioDB, 
-    sepLetter 
+    sepLetter, 
+    User, 
+    UserDB
 } from "@/app/lib/definition";
 
 export function sleep(ms: number) {
@@ -100,3 +102,20 @@ export function convertPfParagToDB(
 }
 
 export const makeKey = (index: number) => String(Date.now() * 10 + index);
+
+export function getUserFromDB(userDB: UserDB) : User {
+    return {
+        id: userDB.id,
+        name: userDB.name,
+        email: userDB.email,
+        socialSites : userDB.socialsites.split(sepLetter)
+    };
+}
+
+export function sendUserToDB(user: Omit<User, "id">) : Omit<UserDB, "id"> {
+    return {
+        name: user.name,
+        email: user.email,
+        socialsites: user.socialSites.join(sepLetter) || ''
+    }
+}

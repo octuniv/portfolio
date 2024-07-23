@@ -1,14 +1,20 @@
 export const sepLetter = '^|^';
 
-export const userKeys =  ['name', 'email', 'address', 'phone'] as const;
+export const userKeys =  ['name', 'email', 'socialSites'] as const;
 
 export type User = {
+    id : string,
+    name: string,
+    email: string,
+    socialSites: string[]
+};
+
+export type UserDB = {
     id: string,
     name: string,
     email: string,
-    address: string,
-    phone: string
-};
+    socialsites: string
+}
 
 export type Paragraph = {
     id: string,

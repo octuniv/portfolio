@@ -1,11 +1,11 @@
 "use client";
 
 import { Paragraph } from "@/app/lib/definition";
-import Link from "next/link";
-import { FocusEvent, MouseEvent, useState } from "react";
-import { Button } from "@/app/ui/button";
+import { Button } from "@/app/ui/buttonComponent";
 import { ParagraphState as ErrorState } from "@/app/lib/action";
 import { makeKey } from "@/app/lib/util";
+import Link from "next/link";
+import { FocusEvent, MouseEvent, useState } from "react";
 
 export default function ParagraphEditor({
   paragraph,
