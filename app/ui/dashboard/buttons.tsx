@@ -129,5 +129,5 @@ export function EditUser() {
 }
 
 export function AlignRightButtons({ children }: { children: React.ReactNode }) {
-  return <div className="flex justify-end gap-6 p-2">{children}</div>;
+  return <div className="flex justify-end gap-6 p-2 mr-2">{children}</div>;
 }

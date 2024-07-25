@@ -11,12 +11,18 @@ export function ParagraphSkeleton() {
 }
 
 function ParagraphComponent({ paragraph }: { paragraph: ParagraphType }) {
-  const { id, title, content } = paragraph;
+  const { id, title, content: contents } = paragraph;
   return (
-    <div className="my-6">
-      <p>title : {title}</p>
-      {content.map((c, ind) => (
-        <p key={ind}>{c}</p>
+    <div className="relative rounded-3xl bg-emerald-50">
+      <dt>
+        <p className="font-heading mt-2 ml-8 text-lg leading-6 font-bold text-gray-700">
+          {title}
+        </p>
+      </dt>
+      {contents.map((content, ind) => (
+        <dd className="mt-2 ml-12 text-base text-zinc-700" key={ind}>
+          {content}
+        </dd>
       ))}
       <AlignRightButtons>
         <EditParagraph id={id} />
@@ -33,9 +39,13 @@ export default async function Paragraphs({
 }) {
   return (
     <>
-      {paragraphs.map((para) => (
-        <ParagraphComponent key={para.id} paragraph={para} />
-      ))}
+      <div className="mt-10 mr-2">
+        <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+          {paragraphs.map((para) => (
+            <ParagraphComponent key={para.id} paragraph={para} />
+          ))}
+        </dl>
+      </div>
       <AlignRightButtons>
         <CreateParagraph />
       </AlignRightButtons>
