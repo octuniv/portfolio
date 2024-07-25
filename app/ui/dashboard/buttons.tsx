@@ -38,17 +38,10 @@ function MakeFormButton({
   );
 }
 
-function MakeCreateButton({
-  name,
-  action,
-}: {
-  name: string;
-  action: () => Promise<void>;
-}) {
+function MakeCreateButton({ action }: { action: () => Promise<void> }) {
   const createButton = () => (
-    <button className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-      <span className="hidden md:block">{name}</span>{" "}
-      <PlusIcon className="h-5 md:ml-4" />
+    <button className="size-[2.375rem] rounded-md border p-2 transition-colors hover:bg-gray-100">
+      <PlusIcon className="w-5" />
     </button>
   );
   return <MakeFormButton action={action} ButtonShape={createButton} />;
@@ -69,9 +62,7 @@ export function EditParagraph({ id }: { id: string }) {
 }
 
 export function CreateParagraph() {
-  return (
-    <MakeCreateButton name={"Create Paragraph"} action={createParagraph} />
-  );
+  return <MakeCreateButton action={createParagraph} />;
 }
 
 export function DeleteParagraph({ id }: { id: string }) {
@@ -90,9 +81,7 @@ export function EditPortfolio({ id }: { id: string }) {
 }
 
 export function CreatePortfolio() {
-  return (
-    <MakeCreateButton name={"Create Portfolio"} action={createPortfolio} />
-  );
+  return <MakeCreateButton action={createPortfolio} />;
 }
 
 export function DeletePortfolio({ id }: { id: string }) {
