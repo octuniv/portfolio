@@ -40,12 +40,16 @@ export default async function Profile() {
     <>
       <p className="text-4xl font-medium">Résumé</p>
       <div className="my-6" key="nameEmail">
-        <IconWithLabel Icon={CreditCardIcon} label={name} />
-        <IconWithLabel Icon={EnvelopeIcon} label={email} />
+        <IconWithLabel Icon={CreditCardIcon} label={name} key={name} />
+        <IconWithLabel Icon={EnvelopeIcon} label={email} key={email} />
       </div>
       <div className="my-6" key="socialSites">
-        {socialSites.map((site) => (
-          <IconWithLabel Icon={ChatBubbleLeftEllipsisIcon} label={site} />
+        {socialSites.map((site, ind) => (
+          <IconWithLabel
+            Icon={ChatBubbleLeftEllipsisIcon}
+            label={site}
+            key={`${site}${ind}`}
+          />
         ))}
       </div>
       <EditUser />
