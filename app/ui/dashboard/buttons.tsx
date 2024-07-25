@@ -127,3 +127,7 @@ export function EditUser() {
   const href = `/dashboard/edit/user`;
   return <MakeEditButton href={href} />;
 }
+
+export function AlignRightButtons({ children }: { children: React.ReactNode }) {
+  return <div className="flex justify-end gap-6 p-2">{children}</div>;
+}

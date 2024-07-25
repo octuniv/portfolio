@@ -3,6 +3,7 @@ import {
   Portfolio as PortfolioType,
 } from "@/app/lib/definition";
 import {
+  AlignRightButtons,
   CreatePortfolio,
   DeletePortfolio,
   EditPortfolio,
@@ -33,10 +34,10 @@ function Portfolio({ portfolio }: { portfolio: PortfolioType }) {
       {paragraphs.map((pg, ind) => (
         <Paragraph key={ind} intro={pg["intro"]} content={pg["content"]} />
       ))}
-      <div className="flex justify-end, gap-2">
+      <AlignRightButtons>
         <EditPortfolio id={id} />
         <DeletePortfolio id={id} />
-      </div>
+      </AlignRightButtons>
     </div>
   );
 }
@@ -51,7 +52,9 @@ export default async function Portfolios({
       {portfolios.map((pf, ind) => (
         <Portfolio key={ind} portfolio={pf} />
       ))}
-      <CreatePortfolio />
+      <AlignRightButtons>
+        <CreatePortfolio />
+      </AlignRightButtons>
     </>
   );
 }

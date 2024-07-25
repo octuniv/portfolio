@@ -1,5 +1,6 @@
 import { Paragraph as ParagraphType } from "@/app/lib/definition";
 import {
+  AlignRightButtons,
   CreateParagraph,
   DeleteParagraph,
   EditParagraph,
@@ -17,10 +18,10 @@ function ParagraphComponent({ paragraph }: { paragraph: ParagraphType }) {
       {content.map((c, ind) => (
         <p key={ind}>{c}</p>
       ))}
-      <div className="flex justify-end gap-8">
+      <AlignRightButtons>
         <EditParagraph id={id} />
         <DeleteParagraph id={id} />
-      </div>
+      </AlignRightButtons>
     </div>
   );
 }
@@ -35,7 +36,9 @@ export default async function Paragraphs({
       {paragraphs.map((para) => (
         <ParagraphComponent key={para.id} paragraph={para} />
       ))}
-      <CreateParagraph />
+      <AlignRightButtons>
+        <CreateParagraph />
+      </AlignRightButtons>
     </>
   );
 }
