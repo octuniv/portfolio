@@ -64,7 +64,7 @@ export default function PortfolioBoard({
   state: PfParagState;
   formAction: (payload: FormData) => void;
 }) {
-  const returnAddress = `/dashboard/edit/portfolio/${pfId}/paragraph/${pgId}`;
+  const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
   const [inputIntro, setInputIntro] = makeInitState(intro);
   const [inputCt, setInputCt] = makeInitState(content);
 
