@@ -1,5 +1,5 @@
 import {
-  ParagraphInPf,
+  ParagraphBoard,
   Portfolio as PortfolioType,
 } from "@/app/lib/definition";
 import {
@@ -13,8 +13,8 @@ export function PortfolioSkeleton() {
   return <p>Loading Portfolios......</p>;
 }
 
-function Paragraph({ paragraphInPf }: { paragraphInPf: ParagraphInPf }) {
-  const { subtitle, intro, content } = paragraphInPf;
+function Paragraph({ ParagraphBoard }: { ParagraphBoard: ParagraphBoard }) {
+  const { subtitle, intro, content } = ParagraphBoard;
   return (
     <div className="flex flex-col mb-8">
       <p className="text-lg font-bold text-gray-700">{subtitle}</p>
@@ -38,12 +38,12 @@ function Paragraph({ paragraphInPf }: { paragraphInPf: ParagraphInPf }) {
 function Portfolio({ portfolio }: { portfolio: PortfolioType }) {
   const { id, title, paragraphs } = portfolio;
   return (
-    <div className="bg-slate-50 rounded-3xl py-3 pl-6">
+    <div className="bg-slate-50 rounded-3xl py-3 pl-6 my-8">
       <h2 className="text-lg font-mono font-bold text-top-color">{title}</h2>
       <div className="border-2 w-20 border-t-stone-500 my-3"></div>
       <div className="flex flex-col">
         {paragraphs.map((pg, ind) => (
-          <Paragraph key={ind} paragraphInPf={pg} />
+          <Paragraph key={ind} ParagraphBoard={pg} />
         ))}
       </div>
       <AlignRightButtons>

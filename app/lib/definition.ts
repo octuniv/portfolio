@@ -22,35 +22,42 @@ export type Paragraph = {
     content: string[]
 };
 
-export type ParagraphInPf = {
+export type ParagraphBoard = {
     id: number,
     subtitle: string,
     intro: string[],
     content: string[]
 };
 
+type StringHasKey = {
+    value: string,
+    key: string
+}
+
+export type ParagraphBoardDiv = Omit<ParagraphBoard, "intro" | "content"> & {intro : StringHasKey[], content: StringHasKey[]}
+
+export type ParagraphBoardInDB = {
+    id: number,
+    subtitle: string,
+    intro: string,
+    content: string,
+    portfolio_id: string
+};
+
 export type ParagraphDB = {
     id: string,
     title: string,
     content: string
-}
+};
 
 export type Portfolio = {
     id: string,
     title: string,
-    paragraphs: ParagraphInPf[]
+    paragraphs: ParagraphBoard[]
 };
 
 export type PortfolioDB = {
     id: string,
     title: string,
     sequence: number
-}
-
-export type PgInPFDB = {
-    id: number,
-    subtitle: string,
-    intro: string,
-    content: string,
-    portfolio_id: string
 }

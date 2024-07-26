@@ -11,6 +11,7 @@ import {
   Dispatch,
 } from "react";
 import { makeKey } from "@/app/lib/util";
+import { ParagraphBoard } from "@/app/lib/definition";
 
 type Input = {
   value: string;
@@ -52,19 +53,18 @@ const makeInputBlur =
 export default function PortfolioBoard({
   pfId,
   pgId,
-  intro,
-  content,
+  paragraphBoard,
   state,
   formAction,
 }: {
   pfId: string;
   pgId: number;
-  intro: string[];
-  content: string[];
+  paragraphBoard: ParagraphBoard;
   state: PfParagState;
   formAction: (payload: FormData) => void;
 }) {
   const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
+  const { subtitle, intro, content } = paragraphBoard;
   const [inputIntro, setInputIntro] = makeInitState(intro);
   const [inputCt, setInputCt] = makeInitState(content);
 
@@ -79,6 +79,20 @@ export default function PortfolioBoard({
 
   return (
     <form action={formAction}>
+      <p>title</p>
+      <input
+        id="subtitle"
+        name="subtitle"
+        defaultValue={subtitle}
+        placeholder="enter subtitle"
+      />
+      <div id="intro-error" aria-live="polite" aria-atomic="true">
+        {state?.errors?.subtitle?.map((error: string) => (
+          <p className="mt-2 text-sm text-red-500" key={error}>
+            {error}
+          </p>
+        ))}
+      </div>
       <p>intro</p>
       {inputIntro.map((elem, ind) => (
         <div key={elem.key}>

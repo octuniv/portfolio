@@ -3,13 +3,13 @@ import {
     Paragraph,
     ParagraphDB,
     sepLetter, 
-    ParagraphInPf,
+    ParagraphBoard,
     Portfolio, 
     PortfolioDB, 
-    PgInPFDB,
+    ParagraphBoardInDB,
     UserDB
 } from './definition';
-import { convertDBToPage, convertDBToPfParag, getUserFromDB, sleep } from './util';
+import { convertDBToPage, convPgBoardDBToRaw, getUserFromDB, sleep } from './util';
 
 export async function fetchUser() {
     const queryText = `SELECT id, name, email, socialsites FROM users`;
@@ -64,7 +64,7 @@ export async function fetchPortfolios() {
             return acc;
         }, new Map());
 
-        const paragraphs: PgInPFDB[] = pgQuery.rows;
+        const paragraphs: ParagraphBoardInDB[] = pgQuery.rows;
 
         const result: Portfolio[] = [];
 
@@ -72,7 +72,7 @@ export async function fetchPortfolios() {
 
         for (const pf of portfolios) {
             // if (rIdx >= paragraphs.length) break;
-            const pgInPf: ParagraphInPf[] = [];
+            const pgInPf: ParagraphBoard[] = [];
             while (rIdx < paragraphs.length) {
                 const pg = paragraphs[rIdx];
                 if (pg['portfolio_id'] !== pf['id']) break;
@@ -122,7 +122,7 @@ export async function fetchParagraphById(id : string) {
 
 export async function fetchPortfolioById(id: string) {
     const pfQuery = `SELECT id, title from portfolios WHERE id = $1`;
-    const pgQuery = `SELECT id, intro, content from paragraphsinportfolio WHERE portfolio_id = $1 ORDER BY id`;
+    const pgQuery = `SELECT id, subtitle, intro, content from paragraphsinportfolio WHERE portfolio_id = $1 ORDER BY id`;
     const { convPortfolio } = convertDBToPage();
     try {
         const pfById = await query(pfQuery, [id]);
@@ -149,12 +149,12 @@ export async function fetchPfTitleById(id: string) {
 }
 
 export async function fetchPfParagById(pfId: string, pgId: number) {
-    const queryText = `SELECT intro, content from paragraphsinportfolio WHERE portfolio_id = $1 AND id = $2`;
+    const queryText = `SELECT id, subtitle, intro, content from paragraphsinportfolio WHERE portfolio_id = $1 AND id = $2`;
 
     try {
         const ret = await query(queryText, [pfId, pgId]);
         if (!ret) return null;
-        return convertDBToPfParag(ret.rows[0]);
+        return convPgBoardDBToRaw(ret.rows[0]);
     } catch (error) {
         console.error(`fetch Portfolio paragraph By #%d and #%d is Error`, pfId, pgId);
         return null;

@@ -1,13 +1,14 @@
 import { 
     Paragraph, 
     ParagraphDB, 
-    ParagraphInPf, 
-    PgInPFDB,
+    ParagraphBoard, 
+    ParagraphBoardInDB,
     Portfolio,
     PortfolioDB, 
     sepLetter, 
     User, 
-    UserDB
+    UserDB,
+    ParagraphBoardDiv
 } from "@/app/lib/definition";
 
 export function sleep(ms: number) {
@@ -40,13 +41,14 @@ export function convertDBToPage() {
         };
     };
 
-    const convPortfolio = (pfData: PortfolioDB, pgDatas: PgInPFDB[]): Portfolio => {
+    const convPortfolio = (pfData: PortfolioDB, pgDatas: ParagraphBoardInDB[]): Portfolio => {
         return {
             id: pfData.id,
             title: pfData.title,
             paragraphs: pgDatas.map(pg => {
                 return {
                     id: pg.id,
+                    subtitle: pg.subtitle,
                     intro: pg.intro.split(sepLetter),
                     content: pg.content.split(sepLetter)
                 }
@@ -69,36 +71,44 @@ export function convertPageToDB() {
     return { convParagraph };
 }
 
-export function convertDBToPfParag(
-    {
-        intro,
-        content
-    } :
-    {
-        intro: string,
-        content: string
-    }
-) {
-    return {
-        intro: intro.split(sepLetter),
-        content: content.split(sepLetter)
-    };
+export function convParagBoardsToDivs(paragBoards : ParagraphBoard[]) {
+    return paragBoards.map((pgBoard) => (
+        {
+            id: pgBoard.id,
+            subtitle: pgBoard.subtitle,
+            intro: pgBoard.intro.map((int, ind) => (
+                {
+                    value : int,
+                    key: `intro${makeKey(ind)}`,
+                }
+            )),
+            content: pgBoard.content.map((ct, ind) => (
+                {
+                    value: ct,
+                    key: `content${makeKey(ind)}`,
+                }
+            ))
+        } satisfies ParagraphBoardDiv
+    ));
 }
 
-export function convertPfParagToDB(
-    {
-        intro,
-        content
-    } :
-    {
-        intro: string[],
-        content: string[]
-    }
-) {
+export function convPgBoardDBToRaw(boardInDB: Omit<ParagraphBoardInDB, "portfolio_id">) {
+    const { id, subtitle, intro, content} = boardInDB;
     return {
+        id: id,
+        subtitle: subtitle,
+        intro: intro.split(sepLetter),
+        content: content.split(sepLetter)
+    } satisfies ParagraphBoard;
+}
+
+export function convPgBoardRawToDB(board: Omit<ParagraphBoard, "id">) {
+    const { subtitle, intro, content } = board;
+    return {
+        subtitle: subtitle,
         intro: intro.join(sepLetter),
         content: content.join(sepLetter)
-    }
+    } satisfies Omit<ParagraphBoardInDB, "portfolio_id" | "id">
 }
 
 export const makeKey = (index: number) => String(Date.now() * 10 + index);

@@ -12,12 +12,5 @@ export default async function Page({
   const parag = await fetchPfParagById(id, pgId);
   if (!parag) notFound();
 
-  return (
-    <EditForm
-      pfId={id}
-      pgId={pgId}
-      intro={parag.intro}
-      content={parag.content}
-    />
-  );
+  return <EditForm pfId={id} pgId={pgId} paragraphBoard={parag} />;
 }

@@ -1,11 +1,11 @@
 'use server';
 
 import { z } from "zod";
-import { convertPageToDB, convertPfParagToDB, sendUserToDB } from "./util";
+import { convertPageToDB, convPgBoardRawToDB, sendUserToDB } from "./util";
 import { query, Client } from "@/config/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { User, userKeys } from "./definition";
+import { ParagraphBoard, User, userKeys } from "./definition";
 
 const paragraphSchema = z.object({
     id: z.string(),
@@ -123,7 +123,7 @@ export async function createPortfolio() {
 }
 
 export async function addPfParagraph(id : string) {
-    const queryText = `INSERT INTO paragraphsinportfolio (intro, content, portfolio_id) values ('NEW', 'NEW', $1)`;
+    const queryText = `INSERT INTO paragraphsinportfolio (subtitle, intro, content, portfolio_id) values ('NEWTITLE', 'NEW', 'NEW', $1)`;
 
     try {
         await query(queryText, [id]);
@@ -185,6 +185,7 @@ export async function updatePfTitle(pfId: string, prevState: PfTitleState, formD
 
 export type PfParagState = {
     errors?: {
+        subtitle?: string[];
         intro?: string[];
         content?: string[];
     };
@@ -194,6 +195,7 @@ export type PfParagState = {
 const PfParagSchema = z.object({
     pfId: z.string(),
     pgId: z.number(),
+    subtitle: z.string().min(1, {message : `Don't you enter your subtitle?`}),
     intro: z.array(
         z.coerce.
         string()
@@ -210,6 +212,7 @@ const EditPfParag = PfParagSchema.omit({ pfId: true, pgId: true });
 
 export async function updatePfParag(pfId: string, pgId: number, prevState: PfParagState, formData : FormData) {
     const validatedFields = EditPfParag.safeParse({
+        subtitle: formData.get('subtitle'),
         intro: formData.getAll('intro').filter((i) => typeof i === 'string' && i.length > 0),
         content: formData.getAll('content').filter((ct) => typeof ct === 'string' && ct.length > 0),
     });
@@ -221,16 +224,16 @@ export async function updatePfParag(pfId: string, pgId: number, prevState: PfPar
         }
     }
 
-    const params = convertPfParagToDB(validatedFields.data);
+    const params = convPgBoardRawToDB(validatedFields.data);
 
     const queryText = `
-        UPDATE paragraphsinportfolio
-        SET intro = $1, content = $2
-        WHERE id = $3 AND portfolio_id = $4
+        UPDATE paragraphsinportfolio 
+        SET subtitle = $1, intro = $2, content = $3
+        WHERE id = $4 AND portfolio_id = $5
     `;
 
     try {
-        await query(queryText, [params.intro, params.content, pgId, pfId]);
+        await query(queryText, [params.subtitle, params.intro, params.content, pgId, pfId]);
     } catch (error) {
         return { message: 'Database Error: Failed to update PfParag' };
     }

@@ -3,17 +3,16 @@
 import { updatePfParag } from "@/app/lib/action";
 import { useActionState } from "react";
 import PortfolioBoard from "../../portfolio/portfolioBoard";
+import { ParagraphBoard } from "@/app/lib/definition";
 
 export default function EditBoard({
   pfId,
   pgId,
-  intro,
-  content,
+  paragraphBoard,
 }: {
   pfId: string;
   pgId: number;
-  intro: string[];
-  content: string[];
+  paragraphBoard: ParagraphBoard;
 }) {
   const initialState = { message: "", errors: {} };
   const updatePfParagWithId = updatePfParag.bind(null, pfId, pgId);
@@ -23,8 +22,7 @@ export default function EditBoard({
     <PortfolioBoard
       pfId={pfId}
       pgId={pgId}
-      intro={intro}
-      content={content}
+      paragraphBoard={paragraphBoard}
       state={state}
       formAction={formAction}
     />

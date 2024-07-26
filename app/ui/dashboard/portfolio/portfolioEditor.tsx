@@ -1,44 +1,34 @@
 "use client";
 
-import { Portfolio } from "@/app/lib/definition";
+import { ParagraphBoardDiv, Portfolio } from "@/app/lib/definition";
 import {
   EditParagraph,
   EditTitle,
 } from "@/app/ui/dashboard/portfolio/portfolioButtons";
 import { AddPfParagraph, DeletePfParagraph } from "@/app/ui/dashboard/buttons";
-import { makeKey } from "@/app/lib/util";
+import { convParagBoardsToDivs } from "@/app/lib/util";
 import Link from "next/link";
-
-type ParagraphDivType = {
-  id: number;
-  intro: {
-    intro: string;
-    key: string;
-  }[];
-  content: {
-    content: string;
-    key: string;
-  }[];
-};
 
 function ParagraphDiv({
   paragraphInput,
   pfId,
 }: {
-  paragraphInput: ParagraphDivType;
+  paragraphInput: ParagraphBoardDiv;
   pfId: string;
 }) {
-  const { intro, content, id } = paragraphInput;
+  const { subtitle, intro, content, id } = paragraphInput;
   return (
     <div key={id} className="my-8">
-      <p>Introduction</p>
+      <p>subtitle : {subtitle}</p>
+      <br />
+      <p>intro</p>
       {intro.map((int) => {
-        return <p key={int.key}>{int.intro}</p>;
+        return <p key={int.key}>{int.value}</p>;
       })}
       <br />
       <p>Content</p>
       {content.map((ct) => {
-        return <p key={ct.key}>{ct.content}</p>;
+        return <p key={ct.key}>{ct.value}</p>;
       })}
       <EditParagraph id={pfId} pgId={id} />
       <DeletePfParagraph pfId={pfId} pgId={id} />
@@ -51,23 +41,7 @@ export default function PortfolioEditor({
 }: {
   portfolio: Portfolio;
 }) {
-  const paragraphs = portfolio.paragraphs.map((pg) => {
-    return {
-      intro: pg.intro.map((intro, i) => {
-        return {
-          intro: intro,
-          key: `intro${makeKey(i)}`,
-        };
-      }),
-      content: pg.content.map((ct, i) => {
-        return {
-          content: ct,
-          key: `content${makeKey(i)}`,
-        };
-      }),
-      id: pg.id,
-    };
-  });
+  const paragraphs = convParagBoardsToDivs(portfolio.paragraphs);
 
   return (
     <>
