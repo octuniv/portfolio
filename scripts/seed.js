@@ -114,6 +114,7 @@ async function seedPortfolios() {
         const createParagraphsTable = await client.query(`
             CREATE TABLE IF NOT EXISTS paragraphsInPortfolio (
             id SERIAL PRIMARY KEY,
+            subtitle VARCHAR(255) NOT NULL,
             intro TEXT NOT NULL,
             content TEXT NOT NULL,
             portfolio_id UUID references portfolios(id)
@@ -129,8 +130,8 @@ async function seedPortfolios() {
         `;
 
         const paragraphQueryText = `
-            INSERT INTO paragraphsInPortfolio (intro, content, portfolio_id)
-            VALUES ($1, $2, $3);
+            INSERT INTO paragraphsInPortfolio (subtitle, intro, content, portfolio_id)
+            VALUES ($1, $2, $3, $4);
         `
 
         const insertedPortfolios = await Promise.all(
@@ -143,7 +144,7 @@ async function seedPortfolios() {
 
                     pfC.paragraphs.map(
                         async (parags) => {
-                            const params = [parags.intro, parags.content, portfolioId];
+                            const params = [parags.subtitle, parags.intro, parags.content, portfolioId];
 
                             await client.query(paragraphQueryText, params);
                         }

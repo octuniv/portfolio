@@ -23,7 +23,8 @@ export type Paragraph = {
 };
 
 export type ParagraphInPf = {
-    id: number
+    id: number,
+    subtitle: string,
     intro: string[],
     content: string[]
 };
@@ -48,6 +49,7 @@ export type PortfolioDB = {
 
 export type PgInPFDB = {
     id: number,
+    subtitle: string,
     intro: string,
     content: string,
     portfolio_id: string

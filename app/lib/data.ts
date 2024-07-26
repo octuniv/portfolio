@@ -78,6 +78,7 @@ export async function fetchPortfolios() {
                 if (pg['portfolio_id'] !== pf['id']) break;
                 pgInPf.push({
                     id: pg.id,
+                    subtitle: pg.subtitle,
                     intro: pg.intro.split(sepLetter),
                     content: pg.content.split(sepLetter)
                 });

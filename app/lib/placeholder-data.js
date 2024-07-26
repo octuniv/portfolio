@@ -18,10 +18,12 @@ const portfolios = [
         title: "portfolio Example",
         paragraphs: [
             {
+                subtitle: "title",
                 intro: "ex1^|^ex2",
                 content: "Example 1^|^Example 2^|^Example 3"
             },
             {
+                subtitle: "title",
                 intro: "aex1^|^aex2",
                 content: "anotherExample 1^|^anotherExample 2^|^anotherExample 3"
             }

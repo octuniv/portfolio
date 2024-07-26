@@ -13,15 +13,24 @@ export function PortfolioSkeleton() {
   return <p>Loading Portfolios......</p>;
 }
 
-function Paragraph({ intro, content }: Omit<ParagraphInPf, "id">) {
+function Paragraph({ paragraphInPf }: { paragraphInPf: ParagraphInPf }) {
+  const { subtitle, intro, content } = paragraphInPf;
   return (
-    <div className="my-6">
+    <div className="flex flex-col mb-8">
+      <p className="text-lg font-bold text-gray-700">{subtitle}</p>
       {intro.map((it, ind) => (
-        <p key={"intro" + ind}>{it}</p>
+        <p
+          key={"intro" + ind}
+          className="font-semibold text-sm text-gray-700 mt-2 mb-1"
+        >
+          {it}
+        </p>
       ))}
-      {content.map((ct, ind) => (
-        <p key={"content" + ind}>{ct}</p>
-      ))}
+      <ul className="text-sm list-disc pl-4 space-y-1">
+        {content.map((ct, ind) => (
+          <li key={"content" + ind}>{ct}</li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -29,11 +38,14 @@ function Paragraph({ intro, content }: Omit<ParagraphInPf, "id">) {
 function Portfolio({ portfolio }: { portfolio: PortfolioType }) {
   const { id, title, paragraphs } = portfolio;
   return (
-    <div className="my-6">
-      <p>title:{title}</p>
-      {paragraphs.map((pg, ind) => (
-        <Paragraph key={ind} intro={pg["intro"]} content={pg["content"]} />
-      ))}
+    <div className="bg-slate-50 rounded-3xl py-3 pl-6">
+      <h2 className="text-lg font-mono font-bold text-top-color">{title}</h2>
+      <div className="border-2 w-20 border-t-stone-500 my-3"></div>
+      <div className="flex flex-col">
+        {paragraphs.map((pg, ind) => (
+          <Paragraph key={ind} paragraphInPf={pg} />
+        ))}
+      </div>
       <AlignRightButtons>
         <EditPortfolio id={id} />
         <DeletePortfolio id={id} />
