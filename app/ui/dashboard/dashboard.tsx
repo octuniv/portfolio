@@ -5,6 +5,7 @@ import {
   Paragraph as ParagraphType,
   Portfolio as PortfolioType,
 } from "@/app/lib/definition";
+import { AlignRightButtons, VisibleToggleButton } from "./buttons";
 
 export default function Dashboard({
   paragraphs,
@@ -21,6 +22,9 @@ export default function Dashboard({
       <Suspense fallback={<PortfolioSkeleton />}>
         <Portfolios portfolios={portfolios} />
       </Suspense>
+      <AlignRightButtons>
+        <VisibleToggleButton />
+      </AlignRightButtons>
     </>
   );
 }

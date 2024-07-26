@@ -1,9 +1,12 @@
+"use client";
+
 import { Paragraph as ParagraphType } from "@/app/lib/definition";
 import {
   AlignRightButtons,
   CreateParagraph,
   DeleteParagraph,
   EditParagraph,
+  HiddenableButtons,
 } from "@/app/ui/dashboard/buttons";
 
 export function ParagraphSkeleton() {
@@ -24,10 +27,12 @@ function ParagraphComponent({ paragraph }: { paragraph: ParagraphType }) {
           {content}
         </dd>
       ))}
-      <AlignRightButtons>
-        <EditParagraph id={id} />
-        <DeleteParagraph id={id} />
-      </AlignRightButtons>
+      <HiddenableButtons>
+        <AlignRightButtons>
+          <EditParagraph id={id} />
+          <DeleteParagraph id={id} />
+        </AlignRightButtons>
+      </HiddenableButtons>
     </div>
   );
 }
@@ -46,9 +51,11 @@ export default async function Paragraphs({
           ))}
         </dl>
       </div>
-      <AlignRightButtons>
-        <CreateParagraph />
-      </AlignRightButtons>
+      <HiddenableButtons>
+        <AlignRightButtons>
+          <CreateParagraph />
+        </AlignRightButtons>
+      </HiddenableButtons>
     </>
   );
 }

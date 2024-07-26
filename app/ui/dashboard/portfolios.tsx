@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ParagraphInPf,
   Portfolio as PortfolioType,
@@ -7,6 +9,7 @@ import {
   CreatePortfolio,
   DeletePortfolio,
   EditPortfolio,
+  HiddenableButtons,
 } from "@/app/ui/dashboard/buttons";
 
 export function PortfolioSkeleton() {
@@ -34,10 +37,12 @@ function Portfolio({ portfolio }: { portfolio: PortfolioType }) {
       {paragraphs.map((pg, ind) => (
         <Paragraph key={ind} intro={pg["intro"]} content={pg["content"]} />
       ))}
-      <AlignRightButtons>
-        <EditPortfolio id={id} />
-        <DeletePortfolio id={id} />
-      </AlignRightButtons>
+      <HiddenableButtons>
+        <AlignRightButtons>
+          <EditPortfolio id={id} />
+          <DeletePortfolio id={id} />
+        </AlignRightButtons>
+      </HiddenableButtons>
     </div>
   );
 }
@@ -52,9 +57,11 @@ export default async function Portfolios({
       {portfolios.map((pf, ind) => (
         <Portfolio key={ind} portfolio={pf} />
       ))}
-      <AlignRightButtons>
-        <CreatePortfolio />
-      </AlignRightButtons>
+      <HiddenableButtons>
+        <AlignRightButtons>
+          <CreatePortfolio />
+        </AlignRightButtons>
+      </HiddenableButtons>
     </>
   );
 }

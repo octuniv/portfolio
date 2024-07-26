@@ -1,6 +1,6 @@
 import { fetchUser } from "@/app/lib/data";
 import { userKeys } from "@/app/lib/definition";
-import { EditUser } from "@/app/ui/dashboard/buttons";
+import { EditUser, HiddenableButtons } from "@/app/ui/dashboard/buttons";
 import {
   CreditCardIcon,
   EnvelopeIcon,
@@ -52,7 +52,9 @@ export default async function Profile() {
           />
         ))}
       </div>
-      <EditUser />
+      <HiddenableButtons>
+        <EditUser />
+      </HiddenableButtons>
     </>
   );
 }
