@@ -12,6 +12,7 @@ import {
 } from "react";
 import { makeKey } from "@/app/lib/util";
 import { ParagraphBoard } from "@/app/lib/definition";
+import { ErrorElem } from "@/app/ui/elemInEditor";
 
 type Input = {
   value: string;
@@ -86,13 +87,7 @@ export default function PortfolioBoard({
         defaultValue={subtitle}
         placeholder="enter subtitle"
       />
-      <div id="intro-error" aria-live="polite" aria-atomic="true">
-        {state?.errors?.subtitle?.map((error: string) => (
-          <p className="mt-2 text-sm text-red-500" key={error}>
-            {error}
-          </p>
-        ))}
-      </div>
+      <ErrorElem elemName="subtitle" errors={state?.errors?.subtitle} />
       <p>intro</p>
       {inputIntro.map((elem, ind) => (
         <div key={elem.key}>
@@ -108,13 +103,7 @@ export default function PortfolioBoard({
           </Button>
         </div>
       ))}
-      <div id="intro-error" aria-live="polite" aria-atomic="true">
-        {state?.errors?.intro?.map((error: string) => (
-          <p className="mt-2 text-sm text-red-500" key={error}>
-            {error}
-          </p>
-        ))}
-      </div>
+      <ErrorElem elemName="intro" errors={state?.errors?.intro} />
       <Button type="button" onClick={(e) => addIntroClick(e)}>
         Add
       </Button>
@@ -134,13 +123,7 @@ export default function PortfolioBoard({
           </Button>
         </div>
       ))}
-      <div id="content-error" aria-live="polite" aria-atomic="true">
-        {state?.errors?.content?.map((error: string) => (
-          <p className="mt-2 text-sm text-red-500" key={error}>
-            {error}
-          </p>
-        ))}
-      </div>
+      <ErrorElem elemName="content" errors={state?.errors?.content} />
       <Button type="button" onClick={(e) => addContentClick(e)}>
         Add
       </Button>

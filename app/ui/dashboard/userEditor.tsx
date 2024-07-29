@@ -3,6 +3,7 @@ import { User, userKeys } from "@/app/lib/definition";
 import { UserState as ErrorState } from "@/app/lib/action";
 import { Button } from "@/app/ui/buttonComponent";
 import { makeKey } from "@/app/lib/util";
+import { ErrorElem } from "@/app/ui/elemInEditor";
 import React, { useState, FocusEvent, MouseEvent } from "react";
 import Link from "next/link";
 
@@ -32,28 +33,6 @@ function EditElem({
         placeholder={`enter ${elemName}`}
       />
     </div>
-  );
-}
-
-function ErrorElem({
-  elemName,
-  errors,
-}: {
-  elemName: string;
-  errors: string[] | undefined;
-}) {
-  if (!errors) return <></>;
-
-  return (
-    <>
-      {errors.map((err) => (
-        <div id={`${elemName}-error`} aria-live="polite" aria-atomic="true">
-          <p className="mt-2 text-sm text-red-500" key={err}>
-            {err}
-          </p>
-        </div>
-      ))}
-    </>
   );
 }
 

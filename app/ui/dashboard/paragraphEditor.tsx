@@ -4,6 +4,7 @@ import { Paragraph } from "@/app/lib/definition";
 import { Button } from "@/app/ui/buttonComponent";
 import { ParagraphState as ErrorState } from "@/app/lib/action";
 import { makeKey } from "@/app/lib/util";
+import { ErrorElem } from "@/app/ui/elemInEditor";
 import Link from "next/link";
 import { FocusEvent, MouseEvent, useState } from "react";
 
@@ -60,13 +61,7 @@ export default function ParagraphEditor({
           defaultValue={paragraph.title}
           placeholder="Enter your title"
         />
-        <div id="paragraph-error" aria-live="polite" aria-atomic="true">
-          {state?.errors?.title?.map((error: string) => (
-            <p className="mt-2 text-sm text-red-500" key={error}>
-              {error}
-            </p>
-          ))}
-        </div>
+        <ErrorElem elemName="title" errors={state?.errors?.title} />
       </div>
       <div>
         <label>content</label>
@@ -87,13 +82,7 @@ export default function ParagraphEditor({
         <Button type="button" onClick={(e) => handleAddClick(e)}>
           Add
         </Button>
-        <div id="paragraph-error" aria-live="polite" aria-atomic="true">
-          {state?.errors?.content?.map((error: string) => (
-            <p className="mt-2 text-sm text-red-500" key={error}>
-              {error}
-            </p>
-          ))}
-        </div>
+        <ErrorElem elemName="content" errors={state?.errors?.content} />
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
