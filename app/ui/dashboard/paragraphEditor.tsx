@@ -3,10 +3,8 @@
 import { Paragraph } from "@/app/lib/definition";
 import { Button } from "@/app/ui/buttonComponent";
 import { ParagraphState as ErrorState } from "@/app/lib/action";
-import { makeKey } from "@/app/lib/util";
-import { ContentInput, ErrorElem, TitleInput } from "@/app/ui/elemInEditor";
+import { TextAreaInput, ErrorElem, LineInput } from "@/app/ui/elemInEditor";
 import Link from "next/link";
-import { FocusEvent, MouseEvent, useState } from "react";
 import {
   makeAddClick,
   makeInitState,
@@ -24,7 +22,10 @@ export default function ParagraphEditor({
   formAction: (payload: FormData) => void;
 }) {
   const [content, setContent] = makeInitState(paragraph.content);
-  const handleInputBlur = makeInputBlur(content, setContent);
+  const handleInputBlur = makeInputBlur<HTMLTextAreaElement>(
+    content,
+    setContent
+  );
   const handleRemoveClick = makeRemoveClick(setContent);
   const handleAddClick = makeAddClick(content, setContent);
 
@@ -41,7 +42,7 @@ export default function ParagraphEditor({
           </p>
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
-              <TitleInput
+              <LineInput
                 elemName="title"
                 defValue={paragraph.title}
                 placeholder="Enter your title"
@@ -54,7 +55,7 @@ export default function ParagraphEditor({
       <div className="space-y-12">
         {content.map((ct, ind) => (
           <div key={ct["key"]}>
-            <ContentInput
+            <TextAreaInput
               elemName="content"
               defValue={ct["value"]}
               placeholder="Enter your content"

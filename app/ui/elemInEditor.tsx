@@ -30,14 +30,18 @@ export function ErrorElem({
   );
 }
 
-export function TitleInput({
+type onBlurType = (ev: FocusEvent<HTMLInputElement>) => void;
+
+export function LineInput({
   elemName,
   defValue,
   placeholder,
+  onBlur,
 }: {
   elemName: string;
   defValue: string;
   placeholder: string;
+  onBlur?: onBlurType;
 }) {
   return (
     <>
@@ -56,6 +60,7 @@ export function TitleInput({
             className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
             placeholder={placeholder}
             defaultValue={defValue}
+            onBlur={!!onBlur ? onBlur : undefined}
           />
         </div>
       </div>
@@ -63,7 +68,7 @@ export function TitleInput({
   );
 }
 
-export function ContentInput({
+export function TextAreaInput({
   elemName,
   defValue,
   placeholder,

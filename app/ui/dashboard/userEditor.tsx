@@ -2,35 +2,32 @@
 import { User, userKeys } from "@/app/lib/definition";
 import { UserState as ErrorState } from "@/app/lib/action";
 import { Button } from "@/app/ui/buttonComponent";
-import { makeKey } from "@/app/lib/util";
-import { ErrorElem } from "@/app/ui/elemInEditor";
-import React, { useState, FocusEvent, MouseEvent } from "react";
+import { ErrorElem, LineInput } from "@/app/ui/elemInEditor";
+import { FocusEvent } from "react";
 import Link from "next/link";
+import {
+  makeAddClick,
+  makeInitState,
+  makeInputBlur,
+  makeRemoveClick,
+} from "@/app/lib/eventFactory";
 
 function EditElem({
   elemName,
   defValue,
-  blurFunc,
+  onBlur,
 }: {
   elemName: string;
   defValue: string;
-  blurFunc?: (event: FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
 }) {
-  const onBlur = (event: FocusEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    if (blurFunc) {
-      blurFunc(event);
-    }
-  };
   return (
     <div key={elemName} className="my-2">
-      <label>{elemName} : </label>
-      <input
-        id={elemName}
-        name={elemName}
-        defaultValue={defValue}
-        onBlur={onBlur}
+      <LineInput
+        elemName={elemName}
+        defValue={defValue}
         placeholder={`enter ${elemName}`}
+        onBlur={onBlur}
       />
     </div>
   );
@@ -46,35 +43,14 @@ export default function UserEditor({
   formAction: (payload: FormData) => void;
 }) {
   const { name, email, socialSites: defSites } = user;
-  const [socialSites, setSocialSites] = useState(
-    defSites.map((ds, i) => {
-      return { value: ds, key: makeKey(i) };
-    })
+
+  const [socialSites, setSocialSites] = makeInitState(defSites);
+  const handleBlur = makeInputBlur<HTMLInputElement>(
+    socialSites,
+    setSocialSites
   );
-
-  const handleBlur =
-    (index: number) => (event: FocusEvent<HTMLInputElement>) => {
-      const { value: target } = event.target;
-      const nextSites = [...socialSites];
-      nextSites[index]["value"] = target;
-      setSocialSites(nextSites);
-    };
-
-  const handleRemoveClick = (
-    index: number,
-    event: MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-    setSocialSites((oldValues) => oldValues.filter((_, i) => i !== index));
-  };
-
-  const handleAddClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setSocialSites([
-      ...socialSites,
-      { value: "", key: makeKey(socialSites.length) },
-    ]);
-  };
+  const handleRemoveClick = makeRemoveClick(setSocialSites);
+  const handleAddClick = makeAddClick(socialSites, setSocialSites);
 
   const returnAddress = "/dashboard";
   return (
@@ -88,14 +64,14 @@ export default function UserEditor({
           <EditElem
             elemName={"socialSites"}
             defValue={site.value}
-            blurFunc={handleBlur(ind)}
+            onBlur={handleBlur(ind)}
           />
-          <Button type="button" onClick={(e) => handleRemoveClick(ind, e)}>
+          <Button type="button" onClick={handleRemoveClick(ind)}>
             Remove
           </Button>
         </div>
       ))}
-      <Button type="button" onClick={(e) => handleAddClick(e)}>
+      <Button className="my-4" type="button" onClick={handleAddClick}>
         Add
       </Button>
       <ErrorElem elemName={"socialSites"} errors={state?.errors?.socialSites} />

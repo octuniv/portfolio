@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import React from "react";
 
-export function ProfileSkeleton() {
+export function UserProfileSkeleton() {
   return (
     <>
       {userKeys.map((key) => (
@@ -33,7 +33,7 @@ function IconWithLabel({
   );
 }
 
-export default async function Profile() {
+export default async function UserProfile() {
   const { name, email, socialSites } = await fetchUser();
 
   return (

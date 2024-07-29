@@ -39,9 +39,12 @@ export const makeRemoveClick =
   };
 
 export const makeInputBlur =
-  (values: Input, setter: Setter) =>
+  <T extends HTMLTextAreaElement | HTMLInputElement>(
+    values: Input,
+    setter: Setter
+  ) =>
   (index: number) =>
-  (event: FocusEvent<HTMLTextAreaElement>) => {
+  (event: FocusEvent<T>) => {
     event.preventDefault();
     const { value: target } = event.target;
     const nextCt = [...values];
