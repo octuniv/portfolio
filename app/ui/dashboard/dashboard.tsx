@@ -1,6 +1,10 @@
 import { Suspense } from "react";
-import Paragraphs, { ParagraphSkeleton } from "@/app/ui/dashboard/paragraphs";
-import Portfolios, { PortfolioSkeleton } from "@/app/ui/dashboard/portfolios";
+import Paragraphs, {
+  ParagraphSkeleton,
+} from "@/app/ui/dashboard/paragraphsView";
+import Portfolios, {
+  PortfolioSkeleton,
+} from "@/app/ui/dashboard/portfoliosView";
 import {
   Paragraph as ParagraphType,
   Portfolio as PortfolioType,

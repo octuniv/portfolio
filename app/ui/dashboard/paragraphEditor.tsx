@@ -4,9 +4,15 @@ import { Paragraph } from "@/app/lib/definition";
 import { Button } from "@/app/ui/buttonComponent";
 import { ParagraphState as ErrorState } from "@/app/lib/action";
 import { makeKey } from "@/app/lib/util";
-import { ErrorElem } from "@/app/ui/elemInEditor";
+import { ContentInput, ErrorElem, TitleInput } from "@/app/ui/elemInEditor";
 import Link from "next/link";
 import { FocusEvent, MouseEvent, useState } from "react";
+import {
+  makeAddClick,
+  makeInitState,
+  makeInputBlur,
+  makeRemoveClick,
+} from "@/app/lib/eventFactory";
 
 export default function ParagraphEditor({
   paragraph,
@@ -17,69 +23,49 @@ export default function ParagraphEditor({
   state: ErrorState;
   formAction: (payload: FormData) => void;
 }) {
-  const [content, setContent] = useState(
-    paragraph.content.map((ct, i) => {
-      return {
-        content: ct,
-        key: makeKey(i),
-      };
-    })
-  );
-
-  const handleInputBlur = (
-    index: number,
-    event: FocusEvent<HTMLInputElement>
-  ) => {
-    event.preventDefault();
-    const { value } = event.target;
-    const nextCt = [...content];
-    nextCt[index]["content"] = value;
-    setContent(nextCt);
-  };
-
-  const handleAddClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setContent([...content, { content: "", key: makeKey(content.length) }]);
-  };
-
-  const handleRemoveClick = (
-    index: number,
-    event: MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-    setContent((oldValues) => oldValues.filter((_, i) => i !== index));
-  };
+  const [content, setContent] = makeInitState(paragraph.content);
+  const handleInputBlur = makeInputBlur(content, setContent);
+  const handleRemoveClick = makeRemoveClick(setContent);
+  const handleAddClick = makeAddClick(content, setContent);
 
   return (
     <form action={formAction}>
-      <div>
-        <label>title</label>
-        <input
-          id="title"
-          name="title"
-          type="text"
-          defaultValue={paragraph.title}
-          placeholder="Enter your title"
-        />
-        <ErrorElem elemName="title" errors={state?.errors?.title} />
+      <div className="space-y-12">
+        <div className="border-b border-gray-900/10 pb-12">
+          <h2 className="text-base font-semibold leading-7 text-gray-900">
+            Profile Detail
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-gray-600">
+            This information creates and displays the components that you want
+            to display.
+          </p>
+          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="sm:col-span-4">
+              <TitleInput
+                elemName="title"
+                defValue={paragraph.title}
+                placeholder="Enter your title"
+              />
+            </div>
+          </div>
+          <ErrorElem elemName="title" errors={state?.errors?.title} />
+        </div>
       </div>
-      <div>
-        <label>content</label>
-        {content.map((ct, i) => (
+      <div className="space-y-12">
+        {content.map((ct, ind) => (
           <div key={ct["key"]}>
-            <input
-              id="content"
-              name="content"
-              defaultValue={ct["content"]}
-              onBlur={(e) => handleInputBlur(i, e)}
-              placeholder="enter content"
+            <ContentInput
+              elemName="content"
+              defValue={ct["value"]}
+              placeholder="Enter your content"
+              onBlur={handleInputBlur(ind)}
             />
-            <Button type="button" onClick={(e) => handleRemoveClick(i, e)}>
+            <Button type="button" onClick={handleRemoveClick(ind)}>
               Remove
             </Button>
           </div>
         ))}
-        <Button type="button" onClick={(e) => handleAddClick(e)}>
+        <Button type="button" onClick={handleAddClick}>
           Add
         </Button>
         <ErrorElem elemName="content" errors={state?.errors?.content} />

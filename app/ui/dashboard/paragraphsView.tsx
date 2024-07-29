@@ -5,6 +5,7 @@ import {
   DeleteParagraph,
   EditParagraph,
 } from "@/app/ui/dashboard/buttons";
+import { CrlfLines } from "@/app/ui/elemInEditor";
 
 export function ParagraphSkeleton() {
   return <p>Loading Paragraphs......</p>;
@@ -12,6 +13,7 @@ export function ParagraphSkeleton() {
 
 function ParagraphComponent({ paragraph }: { paragraph: ParagraphType }) {
   const { id, title, content: contents } = paragraph;
+
   return (
     <div className="relative rounded-3xl bg-emerald-50">
       <dt>
@@ -20,8 +22,8 @@ function ParagraphComponent({ paragraph }: { paragraph: ParagraphType }) {
         </p>
       </dt>
       {contents.map((content, ind) => (
-        <dd className="mt-2 ml-12 text-base text-zinc-700" key={ind}>
-          {content}
+        <dd className="mt-2 ml-12 mb-8 text-base text-zinc-700" key={ind}>
+          <CrlfLines lines={content} key={ind} />
         </dd>
       ))}
       <AlignRightButtons>
