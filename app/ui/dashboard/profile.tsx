@@ -28,7 +28,7 @@ function IconWithLabel({
   return (
     <div className="block my-2">
       <Icon className="inline w-5 mr-2" />
-      <span className="inline">{label}</span>
+      <span className="inline break-words">{label}</span>
     </div>
   );
 }
