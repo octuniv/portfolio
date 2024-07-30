@@ -3,53 +3,14 @@
 import { PfParagState } from "@/app/lib/action";
 import { Button } from "@/app/ui/buttonComponent";
 import Link from "next/link";
-import {
-  useState,
-  MouseEvent,
-  FocusEvent,
-  SetStateAction,
-  Dispatch,
-} from "react";
-import { makeKey } from "@/app/lib/util";
 import { ParagraphBoard } from "@/app/lib/definition";
-import { ErrorElem } from "@/app/ui/elemInEditor";
-
-type Input = {
-  value: string;
-  key: string;
-}[];
-
-type Setter = Dispatch<SetStateAction<Input>>;
-
-const makeInitState = (values: string[]) => {
-  return useState(
-    values.map((v, i) => {
-      return { value: v, key: makeKey(i) };
-    })
-  );
-};
-
-const makeAddClick =
-  (values: Input, setter: Setter) => (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setter([...values, { value: "", key: makeKey(values.length) }]);
-  };
-
-const makeRemoveClick =
-  (setter: Setter) => (index: number, event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setter((oldValues) => oldValues.filter((_, i) => i !== index));
-  };
-
-const makeInputBlur =
-  (values: Input, setter: Setter) =>
-  (index: number, event: FocusEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const { value: target } = event.target;
-    const nextCt = [...values];
-    nextCt[index]["value"] = target;
-    setter(nextCt);
-  };
+import { ErrorElem, LineInput, TextAreaInput } from "@/app/ui/elemInEditor";
+import {
+  makeAddClick,
+  makeInitState,
+  makeInputBlur,
+  makeRemoveClick,
+} from "@/app/lib/eventFactory";
 
 export default function PortfolioBoard({
   pfId,
@@ -80,61 +41,61 @@ export default function PortfolioBoard({
 
   return (
     <form action={formAction}>
-      <p>title</p>
-      <input
-        id="subtitle"
-        name="subtitle"
-        defaultValue={subtitle}
-        placeholder="enter subtitle"
-      />
-      <ErrorElem elemName="subtitle" errors={state?.errors?.subtitle} />
-      <p>intro</p>
-      {inputIntro.map((elem, ind) => (
-        <div key={elem.key}>
-          <input
-            id="intro"
-            name="intro"
-            defaultValue={elem.value}
-            onBlur={(e) => introInputBlur(ind, e)}
-            placeholder="enter intro"
-          />
-          <Button type="button" onClick={(e) => removeIntroClick(ind, e)}>
-            Remove
-          </Button>
+      <div className="space-y-12">
+        <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div className="sm:col-span-4">
+            <LineInput
+              elemName="subtitle"
+              defValue={subtitle}
+              placeholder="Enter Subtitle"
+            />
+            <ErrorElem elemName="subtitle" errors={state?.errors?.subtitle} />
+          </div>
         </div>
-      ))}
-      <ErrorElem elemName="intro" errors={state?.errors?.intro} />
-      <Button type="button" onClick={(e) => addIntroClick(e)}>
-        Add
-      </Button>
-      <br />
-      <p>content</p>
-      {inputCt.map((elem, ind) => (
-        <div key={elem.key}>
-          <input
-            id="content"
-            name="content"
-            defaultValue={elem.value}
-            onBlur={(e) => contentInputBlur(ind, e)}
-            placeholder="enter content"
-          />
-          <Button type="button" onClick={(e) => removeContentClick(ind, e)}>
-            Remove
-          </Button>
+
+        {inputIntro.map((elem, ind) => (
+          <div key={elem.key}>
+            <TextAreaInput
+              elemName="intro"
+              defValue={elem.value}
+              placeholder="Enter Introduction"
+              onBlur={introInputBlur(ind)}
+            />
+            <Button type="button" onClick={removeIntroClick(ind)}>
+              Remove
+            </Button>
+          </div>
+        ))}
+        <ErrorElem elemName="intro" errors={state?.errors?.intro} />
+        <Button type="button" onClick={addIntroClick}>
+          Add
+        </Button>
+        {inputCt.map((elem, ind) => (
+          <div key={elem.key}>
+            <TextAreaInput
+              elemName="content"
+              defValue={elem.value}
+              placeholder="Enter Your Content"
+              onBlur={contentInputBlur(ind)}
+            />
+            <Button type="button" onClick={removeContentClick(ind)}>
+              Remove
+            </Button>
+          </div>
+        ))}
+        <ErrorElem elemName="content" errors={state?.errors?.content} />
+        <Button type="button" onClick={addContentClick}>
+          Add
+        </Button>
+        <div className="mt-6 flex justify-end gap-4">
+          <Link
+            href={returnAddress}
+            className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+          >
+            Cancel
+          </Link>
+          <Button type="submit">Save</Button>
         </div>
-      ))}
-      <ErrorElem elemName="content" errors={state?.errors?.content} />
-      <Button type="button" onClick={(e) => addContentClick(e)}>
-        Add
-      </Button>
-      <div className="mt-6 flex justify-end gap-4">
-        <Link
-          href={returnAddress}
-          className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-        >
-          Cancel
-        </Link>
-        <Button type="submit">Save</Button>
       </div>
     </form>
   );
