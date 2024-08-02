@@ -42,7 +42,7 @@ export default function UserEditor({
   state: ErrorState;
   formAction: (payload: FormData) => void;
 }) {
-  const { name, email, socialSites: defSites } = user;
+  const { name, email, phone, socialSites: defSites } = user;
 
   const [socialSites, setSocialSites] = makeInitState(defSites);
   const handleBlur = makeInputBlur<HTMLInputElement>(
@@ -57,6 +57,8 @@ export default function UserEditor({
     <form action={formAction}>
       <EditElem elemName={"name"} defValue={name} />
       <ErrorElem elemName={"name"} errors={state?.errors?.name} />
+      <EditElem elemName={"phone"} defValue={phone} />
+      <ErrorElem elemName={"phone"} errors={state?.errors?.phone} />
       <EditElem elemName={"email"} defValue={email} />
       <ErrorElem elemName={"email"} errors={state?.errors?.email} />
       {socialSites.map((site, ind) => (

@@ -2,6 +2,7 @@ const users = [
     {
         name: 'User',
         email: 'user@example.ep',
+        phone: '0123456789',
         socialSites : 'https://github.com/octuniv'
     }
 ];

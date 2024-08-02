@@ -1,8 +1,8 @@
 import { fetchUser } from "@/app/lib/data";
 import { userKeys } from "@/app/lib/definition";
-import { EditUser } from "@/app/ui/dashboard/buttons";
+import { AlignRightButtons, EditUser } from "@/app/ui/dashboard/buttons";
 import {
-  CreditCardIcon,
+  DevicePhoneMobileIcon,
   EnvelopeIcon,
   ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/outline";
@@ -33,26 +33,36 @@ function IconWithLabel({
   );
 }
 
+function Title({ title }: { title: string }) {
+  return <h1 className="my-4 ml-4 text-5xl font-medium font-name">{title}</h1>;
+}
+
 export default async function UserProfile() {
-  const { name, email, socialSites } = await fetchUser();
+  const { name, email, phone, socialSites } = await fetchUser();
 
   return (
     <>
-      <p className="text-4xl font-medium">Résumé</p>
-      <div className="my-6" key="nameEmail">
-        <IconWithLabel Icon={CreditCardIcon} label={name} key={name} />
-        <IconWithLabel Icon={EnvelopeIcon} label={email} key={email} />
-      </div>
-      <div className="my-6" key="socialSites">
-        {socialSites.map((site, ind) => (
+      <Title title={name} />
+      <div className="relative rounded-xl bg-purple-50 bg-opacity-80 mt-2 ml-3 mr-5 pl-3">
+        <div className="mt-6 pt-1" key="nameEmail">
           <IconWithLabel
-            Icon={ChatBubbleLeftEllipsisIcon}
-            label={site}
-            key={`${site}${ind}`}
+            Icon={DevicePhoneMobileIcon}
+            label={phone}
+            key={phone}
           />
-        ))}
+          <IconWithLabel Icon={EnvelopeIcon} label={email} key={email} />
+          {socialSites.map((site, ind) => (
+            <IconWithLabel
+              Icon={ChatBubbleLeftEllipsisIcon}
+              label={site}
+              key={`${site}${ind}`}
+            />
+          ))}
+        </div>
+        <AlignRightButtons>
+          <EditUser />
+        </AlignRightButtons>
       </div>
-      <EditUser />
     </>
   );
 }

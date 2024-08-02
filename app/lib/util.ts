@@ -103,6 +103,7 @@ export function getUserFromDB(userDB: UserDB): User {
     id: userDB.id,
     name: userDB.name,
     email: userDB.email,
+    phone: userDB.phone,
     socialSites: userDB.socialsites.split(sepLetter),
   };
 }
@@ -111,6 +112,7 @@ export function sendUserToDB(user: Omit<User, "id">): Omit<UserDB, "id"> {
   return {
     name: user.name,
     email: user.email,
+    phone: user.phone,
     socialsites: user.socialSites.join(sepLetter) || "",
   };
 }

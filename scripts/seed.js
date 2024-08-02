@@ -18,6 +18,7 @@ async function seedUsers() {
             id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL UNIQUE,
+            phone TEXT NOT NULL,
             socialSites TEXT NOT NULL
             );
         `);
@@ -25,15 +26,15 @@ async function seedUsers() {
         console.log(`Created "users" table`);
 
         const queryText = `
-          INSERT INTO users (name, email, socialSites)
-          VALUES ($1, $2, $3)
+          INSERT INTO users (name, email, phone, socialSites)
+          VALUES ($1, $2, $3, $4)
           ON CONFLICT (id) DO NOTHING;
         `
 
         const insertedUsers = await Promise.all(
             users.map(
                 async (user) => {
-                    params = [user.name, user.email, user.socialSites];
+                    params = [user.name, user.email, user.phone, user.socialSites];
                     await client.query(queryText, params);
                 }
             )
