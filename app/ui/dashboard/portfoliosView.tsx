@@ -8,6 +8,7 @@ import {
   DeletePortfolio,
   EditPortfolio,
 } from "@/app/ui/dashboard/buttons";
+import { Title } from "@/app/ui/elemInEditor";
 
 export function PortfolioSkeleton() {
   return <p>Loading Portfolios......</p>;
@@ -16,7 +17,7 @@ export function PortfolioSkeleton() {
 function Paragraph({ ParagraphBoard }: { ParagraphBoard: ParagraphBoard }) {
   const { subtitle, intro, content } = ParagraphBoard;
   return (
-    <div className="flex flex-col mb-8">
+    <article className="flex flex-col mb-8">
       <p className="text-lg font-bold text-gray-700">{subtitle}</p>
       {intro.map((it, ind) => (
         <p
@@ -31,21 +32,20 @@ function Paragraph({ ParagraphBoard }: { ParagraphBoard: ParagraphBoard }) {
           <li key={"content" + ind}>{ct}</li>
         ))}
       </ul>
-    </div>
+    </article>
   );
 }
 
 function Portfolio({ portfolio }: { portfolio: PortfolioType }) {
   const { id, title, paragraphs } = portfolio;
   return (
-    <div className="bg-slate-50 rounded-3xl py-3 pl-6 my-8">
-      <h2 className="text-lg font-mono font-bold text-top-color">{title}</h2>
-      <div className="border-2 w-20 border-t-stone-500 my-3"></div>
-      <div className="flex flex-col">
+    <div className="bg-slate-50 rounded-3xl py-2 pl-6 mr-2 my-8">
+      <Title title={title} />
+      <section className="flex flex-col">
         {paragraphs.map((pg, ind) => (
           <Paragraph key={ind} ParagraphBoard={pg} />
         ))}
-      </div>
+      </section>
       <AlignRightButtons>
         <EditPortfolio id={id} />
         <DeletePortfolio id={id} />

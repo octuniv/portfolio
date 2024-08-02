@@ -117,3 +117,11 @@ export function CrlfLines({ lines }: { lines: string }) {
     </>
   );
 }
+
+export function Title({ title }: { title: string }) {
+  return (
+    <div className="w-fit mb-2">
+      <h2 className="mt-2 text-2xl font-title font-semibold">{title}</h2>
+    </div>
+  );
+}

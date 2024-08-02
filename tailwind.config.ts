@@ -14,7 +14,8 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       fontFamily: {
-        name: ["Jua", "Roboto", "sans-serif"],
+        name: ["Jua", "sans-serif"],
+        title: ["Nanum Gothic", "sans-serif"],
       },
     },
   },

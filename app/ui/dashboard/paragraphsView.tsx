@@ -5,7 +5,7 @@ import {
   DeleteParagraph,
   EditParagraph,
 } from "@/app/ui/dashboard/buttons";
-import { CrlfLines } from "@/app/ui/elemInEditor";
+import { CrlfLines, Title } from "@/app/ui/elemInEditor";
 
 export function ParagraphSkeleton() {
   return <p>Loading Paragraphs......</p>;
@@ -15,16 +15,12 @@ function ParagraphComponent({ paragraph }: { paragraph: ParagraphType }) {
   const { id, title, content: contents } = paragraph;
 
   return (
-    <div className="relative rounded-3xl bg-emerald-50">
-      <dt>
-        <p className="font-heading mt-2 ml-8 text-lg leading-6 font-bold text-gray-700">
-          {title}
-        </p>
-      </dt>
+    <div className="relative rounded-3xl bg-emerald-50 pl-8 py-2">
+      <Title title={title} />
       {contents.map((content, ind) => (
-        <dd className="mt-2 ml-12 mb-8 text-base text-zinc-700" key={ind}>
+        <article className="mt-2 mb-8 text-sm text-zinc-700" key={ind}>
           <CrlfLines lines={content} key={ind} />
-        </dd>
+        </article>
       ))}
       <AlignRightButtons>
         <EditParagraph id={id} />
@@ -42,11 +38,11 @@ export default async function Paragraphs({
   return (
     <>
       <div className="mt-10 mr-2">
-        <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+        <section className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
           {paragraphs.map((para) => (
             <ParagraphComponent key={para.id} paragraph={para} />
           ))}
-        </dl>
+        </section>
       </div>
       <AlignRightButtons>
         <CreateParagraph />
