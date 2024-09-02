@@ -90,7 +90,7 @@ export async function deleteParagraph(id: string) {
 }
 
 export async function deleteBoard(id: string) {
-  const reqAddress = httpServerAddress + `boards/${id}`;
+  const reqAddress = httpServerAddress + `/boards/${id}`;
   const res = await fetch(reqAddress, {
     method: "DELETE",
   });
@@ -107,7 +107,7 @@ export async function deleteBoard(id: string) {
 }
 
 export async function createBoard() {
-  const reqAddress = httpServerAddress + "boards";
+  const reqAddress = httpServerAddress + "/boards";
   const newContent = {
     title: "NEW BOARD",
   } satisfies Pick<Board, "title">;
@@ -130,7 +130,7 @@ export async function createBoard() {
 }
 
 export async function addHistory(id: string) {
-  const reqAddress = httpServerAddress + `boards/history/${id}`;
+  const reqAddress = httpServerAddress + `/boards/history/${id}`;
   const newContent = {
     subtitle: "NEW HISTORY",
     intros: ["NEW"],
@@ -189,7 +189,7 @@ export async function updateBoardTitle(
   }
 
   const { title } = validatedFields.data;
-  const reqAddress = httpServerAddress + `boards/${boardId}`;
+  const reqAddress = httpServerAddress + `/boards/${boardId}`;
   const res = await fetch(reqAddress, {
     method: "PATCH",
     headers: {
@@ -267,7 +267,7 @@ export async function updateHistory(
   };
 
   const reqAddress =
-    httpServerAddress + `boards/history/${boardId}/${historyId}`;
+    httpServerAddress + `/boards/history/${boardId}/${historyId}`;
   const res = await fetch(reqAddress, {
     method: "PATCH",
     headers: {
@@ -295,7 +295,7 @@ export async function updateHistory(
 
 export async function deleteHistory(boardId: string, historyId: number) {
   const reqAddress =
-    httpServerAddress + `boards/history/${boardId}/${historyId}`;
+    httpServerAddress + `/boards/history/${boardId}/${historyId}`;
   const res = await fetch(reqAddress, {
     method: "DELETE",
   });

@@ -15,7 +15,7 @@ import { config } from "dotenv";
 
 config();
 
-export const httpServerAddress = `http://localhost:${process.env.HTTP_SERVER_POST}/`;
+export const httpServerAddress = `${process.env.HTTP_SERVER_URL}`;
 
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

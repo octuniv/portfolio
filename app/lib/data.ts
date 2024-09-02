@@ -60,13 +60,13 @@ export async function fetchParagraphById(id: string) {
 }
 
 export async function fetchBoards(): Promise<Board[]> {
-  const address = httpServerAddress + "boards";
+  const address = httpServerAddress + "/boards";
   const data: BoardDto[] = await fetch(address).then((res) => res.json());
   return data.map((boardElem) => getBoardFromServer(boardElem));
 }
 
 export async function fetchBoardById(boardId: string): Promise<Board> {
-  const address = httpServerAddress + `boards/board/${boardId}`;
+  const address = httpServerAddress + `/boards/board/${boardId}`;
   const data: BoardDto = await fetch(address).then((res) => res.json());
   return getBoardFromServer(data);
 }
@@ -77,7 +77,7 @@ export async function fetchBoardTitleById(boardId: string) {
 }
 
 export async function fetchHistoryId(boardId: string, historyId: number) {
-  const address = httpServerAddress + `boards/history/${boardId}/${historyId}`;
+  const address = httpServerAddress + `/boards/history/${boardId}/${historyId}`;
   const data: HistoryPropertyDto = await fetch(address).then((res) =>
     res.json()
   );
