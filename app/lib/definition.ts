@@ -24,45 +24,57 @@ export type Paragraph = {
   content: string[];
 };
 
-export type ParagraphBoard = {
-  id: number;
-  subtitle: string;
-  intro: string[];
-  content: string[];
-};
-
-type StringHasKey = {
-  value: string;
-  key: string;
-};
-
-export type ParagraphBoardDiv = Omit<ParagraphBoard, "intro" | "content"> & {
-  intro: StringHasKey[];
-  content: StringHasKey[];
-};
-
-export type ParagraphBoardInDB = {
-  id: number;
-  subtitle: string;
-  intro: string;
-  content: string;
-  portfolio_id: string;
-};
-
 export type ParagraphDB = {
   id: string;
   title: string;
   content: string;
 };
 
-export type Portfolio = {
-  id: string;
-  title: string;
-  paragraphs: ParagraphBoard[];
+export type HistoryProperty = {
+  id: number;
+  board_id: string;
+  subtitle: string;
+  intros: string[];
+  contents: string[];
 };
 
-export type PortfolioDB = {
+export type HistoryPropertyDto = Omit<
+  HistoryProperty,
+  "intros" | "contents"
+> & {
+  intros: (HistoryPropDBInfo & {
+    intro: string;
+  })[];
+  contents: (HistoryPropDBInfo & {
+    content: string;
+  })[];
+};
+
+type HistoryPropDBInfo = {
+  id: number;
+  history_id: number;
+};
+
+export type Board = {
   id: string;
   title: string;
-  sequence: number;
+  createdAt: string;
+  historys: HistoryProperty[];
+};
+
+export type BoardDto = Omit<Board, "historys"> & {
+  historys: HistoryPropertyDto[];
+};
+
+type ValueWithKey = {
+  value: string;
+  key: string;
+};
+
+export type HistoryPropertyDiv = Omit<
+  HistoryProperty,
+  "intros" | "contents"
+> & {
+  intros: ValueWithKey[];
+  contents: ValueWithKey[];
 };

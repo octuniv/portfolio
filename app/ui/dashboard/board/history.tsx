@@ -1,9 +1,9 @@
 "use client";
 
-import { PfParagState } from "@/app/lib/action";
+import { HistoryState } from "@/app/lib/action";
 import { Button } from "@/app/ui/buttonComponent";
 import Link from "next/link";
-import { ParagraphBoard } from "@/app/lib/definition";
+import { HistoryProperty } from "@/app/lib/definition";
 import { ErrorElem, LineInput, TextAreaInput } from "@/app/ui/elemInEditor";
 import {
   makeAddClick,
@@ -12,23 +12,21 @@ import {
   makeRemoveClick,
 } from "@/app/lib/eventFactory";
 
-export default function PortfolioBoard({
-  pfId,
-  pgId,
-  paragraphBoard,
+export default function History({
+  boardId,
+  historyProperty,
   state,
   formAction,
 }: {
-  pfId: string;
-  pgId: number;
-  paragraphBoard: ParagraphBoard;
-  state: PfParagState;
+  boardId: string;
+  historyProperty: HistoryProperty;
+  state: HistoryState;
   formAction: (payload: FormData) => void;
 }) {
-  const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
-  const { subtitle, intro, content } = paragraphBoard;
-  const [inputIntro, setInputIntro] = makeInitState(intro);
-  const [inputCt, setInputCt] = makeInitState(content);
+  const returnAddress = `/dashboard/edit/board/${boardId}`;
+  const { subtitle, intros, contents } = historyProperty;
+  const [inputIntro, setInputIntro] = makeInitState(intros);
+  const [inputCt, setInputCt] = makeInitState(contents);
 
   const addIntroClick = makeAddClick(inputIntro, setInputIntro);
   const addContentClick = makeAddClick(inputCt, setInputCt);
@@ -66,7 +64,7 @@ export default function PortfolioBoard({
             </Button>
           </div>
         ))}
-        <ErrorElem elemName="intro" errors={state?.errors?.intro} />
+        <ErrorElem elemName="intro" errors={state?.errors?.intros} />
         <Button type="button" onClick={addIntroClick}>
           Add
         </Button>
@@ -83,7 +81,7 @@ export default function PortfolioBoard({
             </Button>
           </div>
         ))}
-        <ErrorElem elemName="content" errors={state?.errors?.content} />
+        <ErrorElem elemName="content" errors={state?.errors?.contents} />
         <Button type="button" onClick={addContentClick}>
           Add
         </Button>

@@ -2,28 +2,26 @@ import { Suspense } from "react";
 import Paragraphs, {
   ParagraphSkeleton,
 } from "@/app/ui/dashboard/paragraphsView";
-import Portfolios, {
-  PortfolioSkeleton,
-} from "@/app/ui/dashboard/portfoliosView";
+import Boards, { BoardSkeleton } from "@/app/ui/dashboard/boardsView";
 import {
   Paragraph as ParagraphType,
-  Portfolio as PortfolioType,
+  Board as BoardType,
 } from "@/app/lib/definition";
 
 export default function Dashboard({
   paragraphs,
-  portfolios,
+  boards,
 }: {
   paragraphs: ParagraphType[];
-  portfolios: PortfolioType[];
+  boards: BoardType[];
 }) {
   return (
     <>
       <Suspense fallback={<ParagraphSkeleton />}>
         <Paragraphs paragraphs={paragraphs} />
       </Suspense>
-      <Suspense fallback={<PortfolioSkeleton />}>
-        <Portfolios portfolios={portfolios} />
+      <Suspense fallback={<BoardSkeleton />}>
+        <Boards boards={boards} />
       </Suspense>
     </>
   );

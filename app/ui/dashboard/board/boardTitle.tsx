@@ -1,22 +1,22 @@
 "use client";
 
-import { PfTitleState } from "@/app/lib/action";
+import { BoardTitleState } from "@/app/lib/action";
 import { Button } from "@/app/ui/buttonComponent";
 import { ErrorElem, LineInput } from "@/app/ui/elemInEditor";
 import Link from "next/link";
 
-export default function PortfolioTitle({
-  id,
+export default function BoardTitle({
+  boardId,
   title,
   state,
   formAction,
 }: {
-  id: string;
+  boardId: string;
   title: string;
-  state: PfTitleState;
+  state: BoardTitleState;
   formAction: (payload: FormData) => void;
 }) {
-  const returnAddress = `/dashboard/edit/portfolio/${id}`;
+  const returnAddress = `/dashboard/edit/board/${boardId}`;
   return (
     <form action={formAction}>
       <LineInput elemName="title" defValue={title} placeholder="Enter title" />

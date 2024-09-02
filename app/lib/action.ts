@@ -1,11 +1,11 @@
 "use server";
 
 import { z } from "zod";
-import { convertPageToDB, convPgBoardRawToDB, sendUserToDB } from "./util";
+import { convertPageToDB, httpServerAddress, sendUserToDB } from "./util";
 import { query, Client } from "@/config/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ParagraphBoard, User, userKeys } from "./definition";
+import { Board, HistoryProperty, User, userKeys } from "./definition";
 
 const paragraphSchema = z.object({
   id: z.string(),
@@ -89,138 +89,165 @@ export async function deleteParagraph(id: string) {
   revalidatePath(`/dashboard`);
 }
 
-export async function deletePortfolio(id: string) {
-  const queryParags = `DELETE FROM paragraphsinportfolio WHERE portfolio_id = $1`;
-  const queryPf = `DELETE FROM portfolios WHERE id = $1`;
-  const params = [id];
+export async function deleteBoard(id: string) {
+  const reqAddress = httpServerAddress + `boards/${id}`;
+  const res = await fetch(reqAddress, {
+    method: "DELETE",
+  });
+  const result = await res.json();
+  if (result?.error) {
+    if (result?.statusCode === 404 || result?.error === "Not Found") {
+      throw new Error("This Board Entity already not existed!");
+    } else {
+      throw new Error(result.error);
+    }
+  }
 
-  const client = Client();
+  revalidatePath(`/dashboard`);
+}
 
-  try {
-    await client.connect();
-    await client.query("BEGIN");
-    await client.query(queryParags, params);
-    await client.query(queryPf, params);
-    await client.query("COMMIT");
-  } catch (error) {
-    console.error("Error deleting portfolio:", error);
-    await client.query("ROLLBACK");
-    throw error;
-  } finally {
-    await client.end();
+export async function createBoard() {
+  const reqAddress = httpServerAddress + "boards";
+  const newContent = {
+    title: "NEW BOARD",
+  } satisfies Pick<Board, "title">;
+  const res = await fetch(reqAddress, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newContent),
+  });
+  const result = await res.json();
+  if (result?.error) {
+    if (result.error === "Bad Request" || result?.statusCode === 400) {
+      throw new Error("Invalid data was sended");
+    } else {
+      throw new Error(result.error);
+    }
   }
   revalidatePath(`/dashboard`);
 }
 
-export async function createPortfolio() {
-  const queryText = `INSERT INTO portfolios (title) values ('NEW')`;
+export async function addHistory(id: string) {
+  const reqAddress = httpServerAddress + `boards/history/${id}`;
+  const newContent = {
+    subtitle: "NEW HISTORY",
+    intros: ["NEW"],
+    contents: ["NEW"],
+  } satisfies Omit<HistoryProperty, "id" | "board_id">;
+  const res = await fetch(reqAddress, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newContent),
+  });
 
-  try {
-    await query(queryText);
-  } catch (error) {
-    console.error("You can`t create portfolio because of db errors");
-    throw error;
+  const result = await res.json();
+  if (result?.error) {
+    if (result?.statusCode === 404 || result.error === "Not Found") {
+      throw new Error(`Invalid Board Id : ${id}`);
+    } else if (result.error === "Bad Request" || result?.statusCode === 400) {
+      throw new Error("history content has something wrong");
+    } else {
+      throw new Error(result.error);
+    }
   }
-  revalidatePath(`/dashboard`);
+
+  revalidatePath(`/dashboard/edit/board/${id}`);
 }
 
-export async function addPfParagraph(id: string) {
-  const queryText = `INSERT INTO paragraphsinportfolio (subtitle, intro, content, portfolio_id) values ('NEWTITLE', 'NEW', 'NEW', $1)`;
-
-  try {
-    await query(queryText, [id]);
-  } catch (error) {
-    console.error("You can`t Add PfParagraph because of db errors");
-    throw error;
-  }
-  revalidatePath(`/dashboard/edit/portfolio/${id}`);
-}
-
-export type PfTitleState = {
+export type BoardTitleState = {
   errors?: {
     title?: string[];
   };
   message?: string | null;
 };
 
-const PfTitleSchema = z.object({
+const BoardTitleSchema = z.object({
   id: z.string(),
   title: z.coerce.string().min(1, { message: `Don't empty title.` }),
 });
 
-const EditPfTitle = PfTitleSchema.omit({ id: true });
+const EditBoardTitle = BoardTitleSchema.omit({ id: true });
 
-export async function updatePfTitle(
-  pfId: string,
-  prevState: PfTitleState,
+export async function updateBoardTitle(
+  boardId: string,
+  prevState: BoardTitleState,
   formData: FormData
 ) {
-  const validatedFields = EditPfTitle.safeParse({
+  const validatedFields = EditBoardTitle.safeParse({
     title: formData.get("title"),
   });
 
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "Missing Fields. Failed to Update PfTitle.",
+      message: "Missing Fields. Failed to Update BoardTitle.",
     };
   }
 
   const { title } = validatedFields.data;
+  const reqAddress = httpServerAddress + `boards/${boardId}`;
+  const res = await fetch(reqAddress, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title: title } satisfies Pick<Board, "title">),
+  });
+  const result = await res.json();
 
-  const queryText = `
-        UPDATE portfolios
-        SET title = $1
-        WHERE id = $2
-    `;
-
-  try {
-    await query(queryText, [title, pfId]);
-  } catch (error) {
-    return { message: "Database Error: Failed to update PfTitle" };
+  if (result?.error) {
+    if (result.error === "Not Found" || result?.statusCode === 404) {
+      throw new Error(`Invalid BoardId : ${boardId}`);
+    } else {
+      throw new Error(result.error);
+    }
   }
 
-  const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
+  const returnAddress = `/dashboard/edit/board/${boardId}`;
 
   revalidatePath(returnAddress);
   redirect(returnAddress);
 }
 
-export type PfParagState = {
+export type HistoryState = {
   errors?: {
     subtitle?: string[];
-    intro?: string[];
-    content?: string[];
+    intros?: string[];
+    contents?: string[];
   };
   message?: string | null;
 };
 
-const PfParagSchema = z.object({
-  pfId: z.string(),
-  pgId: z.number(),
+const HistorySchema = z.object({
+  boardId: z.string(),
+  historyId: z.number(),
   subtitle: z.string().min(1, { message: `Don't you enter your subtitle?` }),
-  intro: z
+  intros: z
     .array(z.coerce.string())
     .nonempty({ message: `Don't you enter your intro?` }),
-  content: z
+  contents: z
     .array(z.coerce.string())
     .nonempty({ message: `Don't you enter your content?` }),
 });
 
-const EditPfParag = PfParagSchema.omit({ pfId: true, pgId: true });
+const EditPfParag = HistorySchema.omit({ boardId: true, historyId: true });
 
-export async function updatePfParag(
-  pfId: string,
-  pgId: number,
-  prevState: PfParagState,
+export async function updateHistory(
+  boardId: string,
+  historyId: number,
+  prevState: HistoryState,
   formData: FormData
 ) {
   const validatedFields = EditPfParag.safeParse({
     subtitle: formData.get("subtitle"),
-    intro: formData
+    intros: formData
       .getAll("intro")
       .filter((i) => typeof i === "string" && i.length > 0),
-    content: formData
+    contents: formData
       .getAll("content")
       .filter((ct) => typeof ct === "string" && ct.length > 0),
   });
@@ -232,41 +259,55 @@ export async function updatePfParag(
     };
   }
 
-  const params = convPgBoardRawToDB(validatedFields.data);
+  const { subtitle, intros, contents } = validatedFields.data;
+  const params: Omit<HistoryProperty, "id" | "board_id"> = {
+    subtitle: subtitle,
+    intros: intros,
+    contents: contents,
+  };
 
-  const queryText = `
-        UPDATE paragraphsinportfolio 
-        SET subtitle = $1, intro = $2, content = $3
-        WHERE id = $4 AND portfolio_id = $5
-    `;
+  const reqAddress =
+    httpServerAddress + `boards/history/${boardId}/${historyId}`;
+  const res = await fetch(reqAddress, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
+  const result = await res.json();
 
-  try {
-    await query(queryText, [
-      params.subtitle,
-      params.intro,
-      params.content,
-      pgId,
-      pfId,
-    ]);
-  } catch (error) {
-    return { message: "Database Error: Failed to update PfParag" };
+  if (result?.error) {
+    if (result.error === "Not Found" || result?.statusCode === 404) {
+      throw new Error(`Invalid BoardId : ${boardId}, historyId : ${historyId}`);
+    } else if (result.error === "Bad Request" || result?.statusCode === 400) {
+      throw new Error("history content has something wrong");
+    } else {
+      throw new Error(result.error);
+    }
   }
 
-  const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
+  const returnAddress = `/dashboard/edit/board/${boardId}`;
 
   revalidatePath(returnAddress);
   redirect(returnAddress);
 }
 
-export async function deletePfParagraph(pfId: string, pgId: number) {
-  const queryText = `DELETE FROM paragraphsinportfolio WHERE portfolio_id = $1 AND id = $2`;
-  try {
-    await query(queryText, [pfId, pgId]);
-  } catch (error) {
-    console.error("Error deleting paragraph in portfolio:", error);
-    throw error;
+export async function deleteHistory(boardId: string, historyId: number) {
+  const reqAddress =
+    httpServerAddress + `boards/history/${boardId}/${historyId}`;
+  const res = await fetch(reqAddress, {
+    method: "DELETE",
+  });
+  const result = await res.json();
+  if (result?.error) {
+    if (result?.statusCode === 404 || result?.error === "Not Found") {
+      throw new Error("This History Entity already not existed!");
+    } else {
+      throw new Error(result.error);
+    }
   }
-  const returnAddress = `/dashboard/edit/portfolio/${pfId}`;
+  const returnAddress = `/dashboard/edit/board/${boardId}`;
   revalidatePath(returnAddress);
 }
 

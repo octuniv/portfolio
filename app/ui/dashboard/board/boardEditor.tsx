@@ -1,34 +1,34 @@
 "use client";
 
-import { ParagraphBoardDiv, Portfolio } from "@/app/lib/definition";
+import { HistoryPropertyDiv, Board } from "@/app/lib/definition";
 import {
-  EditParagraph,
-  EditTitle,
-} from "@/app/ui/dashboard/portfolio/portfolioButtons";
+  EditHistoryLink,
+  EditTitleLink,
+} from "@/app/ui/dashboard/board/boardButtons";
 import {
-  AddPfParagraph,
+  AddHistory,
   AlignRightButtons,
-  DeletePfParagraph,
+  DeleteHistory,
 } from "@/app/ui/dashboard/buttons";
-import { convParagBoardsToDivs } from "@/app/lib/util";
+import { addKeysInBoardProperty } from "@/app/lib/util";
 import Link from "next/link";
 import { Fragment } from "react";
 
 function BoardDiv({
-  paragraphInput,
-  pfId,
+  histProperty,
+  boardId,
 }: {
-  paragraphInput: ParagraphBoardDiv;
-  pfId: string;
+  histProperty: HistoryPropertyDiv;
+  boardId: string;
 }) {
-  const { subtitle, intro, content, id } = paragraphInput;
+  const { subtitle, intros, contents, id: histId } = histProperty;
   return (
-    <Background key={id}>
+    <Background key={histId}>
       <h3 className="pb-2 mb-3 mt-0 text-2xl font-medium leading-tight border-b-2 border-lime-950 border-dashed">
         {subtitle}
       </h3>
       <p className="mb-4 leading-tight text-sm">
-        {intro.map((it) => (
+        {intros.map((it) => (
           <Fragment key={it.key}>
             {it.value}
             <br />
@@ -36,7 +36,7 @@ function BoardDiv({
         ))}
       </p>
       <p className="mb-4 leading-loose text-xl">
-        {content.map((ct) => (
+        {contents.map((ct) => (
           <Fragment key={ct.key}>
             {ct.value}
             <br />
@@ -44,8 +44,8 @@ function BoardDiv({
         ))}
       </p>
       <AlignRightButtons>
-        <EditParagraph id={pfId} pgId={id} />
-        <DeletePfParagraph pfId={pfId} pgId={id} />
+        <EditHistoryLink boardId={boardId} historyId={histId} />
+        <DeleteHistory boardId={boardId} historyId={histId} />
       </AlignRightButtons>
     </Background>
   );
@@ -59,18 +59,14 @@ function Background({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function PortfolioEditor({
-  portfolio,
-}: {
-  portfolio: Portfolio;
-}) {
-  const paragraphs = convParagBoardsToDivs(portfolio.paragraphs);
+export default function BoardEditor({ board }: { board: Board }) {
+  const historys = addKeysInBoardProperty(board.historys);
 
   return (
     <div className="space-y-12">
       <div className="border-b border-gray-900/10 pb-12 pt-6">
         <h2 className="text-base font-semibold leading-7 text-gray-900">
-          Portfolio Detail
+          Board Detail
         </h2>
         <p className="mt-1 mb-6 text-sm leading-6 text-gray-600">
           This informations create and display the components that you want to
@@ -80,17 +76,17 @@ export default function PortfolioEditor({
           <h2 className="pb-2 mb-6 mt-0 text-3xl font-medium leading-tight border-b-2 border-lime-950 border-dashed">
             TITLE
           </h2>
-          <p className="text-xl font-light">{portfolio.title}</p>
+          <p className="text-xl font-light">{board.title}</p>
           <AlignRightButtons>
-            <EditTitle id={portfolio.id} />
+            <EditTitleLink boardId={board.id} />
           </AlignRightButtons>
         </Background>
       </div>
-      {paragraphs.map((pg) => (
-        <BoardDiv paragraphInput={pg} pfId={portfolio.id} key={pg.id} />
+      {historys.map((hist) => (
+        <BoardDiv histProperty={hist} boardId={board.id} key={hist.id} />
       ))}
       <AlignRightButtons>
-        <AddPfParagraph id={portfolio.id} />
+        <AddHistory id={board.id} />
       </AlignRightButtons>
       <div className="mt-6 flex justify-end gap-4">
         <Link
