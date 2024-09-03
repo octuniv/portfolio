@@ -1,5 +1,3 @@
-export const sepLetter = "^|^";
-
 export const userKeys = ["name", "email", "phone", "socialSites"] as const;
 
 export type User = {
@@ -10,59 +8,78 @@ export type User = {
   socialSites: string[];
 };
 
-export type UserDB = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  socialsites: string;
+export type UserDto = Omit<User, "socialSites"> & {
+  socialSites: SocialSiteDto[];
+};
+
+export type SocialSiteDto = {
+  id?: number;
+  url: string;
+  user_id?: string;
 };
 
 export type Paragraph = {
   id: string;
   title: string;
-  content: string[];
+  createAt: string;
+  posts: string[];
 };
 
-export type ParagraphBoard = {
+export type ParagraphDto = Omit<Paragraph, "posts"> & {
+  posts: PostDto[];
+};
+
+type PostDto = {
   id: number;
-  subtitle: string;
-  intro: string[];
-  content: string[];
+  post: string;
+  parag_id: string;
 };
 
-type StringHasKey = {
+export type HistoryProperty = {
+  id: number;
+  board_id: string;
+  subtitle: string;
+  intros: string[];
+  contents: string[];
+};
+
+export type HistoryPropertyDto = Omit<
+  HistoryProperty,
+  "intros" | "contents"
+> & {
+  intros: (HistoryPropDBInfo & {
+    intro: string;
+  })[];
+  contents: (HistoryPropDBInfo & {
+    content: string;
+  })[];
+};
+
+type HistoryPropDBInfo = {
+  id: number;
+  history_id: number;
+};
+
+export type Board = {
+  id: string;
+  title: string;
+  createdAt: string;
+  historys: HistoryProperty[];
+};
+
+export type BoardDto = Omit<Board, "historys"> & {
+  historys: HistoryPropertyDto[];
+};
+
+type ValueWithKey = {
   value: string;
   key: string;
 };
 
-export type ParagraphBoardDiv = Omit<ParagraphBoard, "intro" | "content"> & {
-  intro: StringHasKey[];
-  content: StringHasKey[];
-};
-
-export type ParagraphBoardInDB = {
-  id: number;
-  subtitle: string;
-  intro: string;
-  content: string;
-  portfolio_id: string;
-};
-
-export type ParagraphDB = {
-  id: string;
-  title: string;
-  content: string;
-};
-
-export type Portfolio = {
-  id: string;
-  title: string;
-  paragraphs: ParagraphBoard[];
-};
-
-export type PortfolioDB = {
-  id: string;
-  title: string;
-  sequence: number;
+export type HistoryPropertyDiv = Omit<
+  HistoryProperty,
+  "intros" | "contents"
+> & {
+  intros: ValueWithKey[];
+  contents: ValueWithKey[];
 };

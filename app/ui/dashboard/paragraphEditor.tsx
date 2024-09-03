@@ -21,13 +21,10 @@ export default function ParagraphEditor({
   state: ErrorState;
   formAction: (payload: FormData) => void;
 }) {
-  const [content, setContent] = makeInitState(paragraph.content);
-  const handleInputBlur = makeInputBlur<HTMLTextAreaElement>(
-    content,
-    setContent
-  );
-  const handleRemoveClick = makeRemoveClick(setContent);
-  const handleAddClick = makeAddClick(content, setContent);
+  const [posts, setPosts] = makeInitState(paragraph.posts);
+  const handleInputBlur = makeInputBlur<HTMLTextAreaElement>(posts, setPosts);
+  const handleRemoveClick = makeRemoveClick(setPosts);
+  const handleAddClick = makeAddClick(posts, setPosts);
 
   return (
     <form action={formAction}>
@@ -53,12 +50,12 @@ export default function ParagraphEditor({
         </div>
       </div>
       <div className="space-y-12">
-        {content.map((ct, ind) => (
-          <div key={ct["key"]}>
+        {posts.map((post, ind) => (
+          <div key={post["key"]}>
             <TextAreaInput
-              elemName="content"
-              defValue={ct["value"]}
-              placeholder="Enter your content"
+              elemName="post"
+              defValue={post["value"]}
+              placeholder="Enter your post"
               onBlur={handleInputBlur(ind)}
             />
             <Button type="button" onClick={handleRemoveClick(ind)}>
@@ -69,7 +66,7 @@ export default function ParagraphEditor({
         <Button type="button" onClick={handleAddClick}>
           Add
         </Button>
-        <ErrorElem elemName="content" errors={state?.errors?.content} />
+        <ErrorElem elemName="content" errors={state?.errors?.posts} />
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link

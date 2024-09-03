@@ -12,14 +12,14 @@ export function ParagraphSkeleton() {
 }
 
 function ParagraphComponent({ paragraph }: { paragraph: ParagraphType }) {
-  const { id, title, content: contents } = paragraph;
+  const { id, title, posts } = paragraph;
 
   return (
     <div className="relative rounded-3xl bg-emerald-50 pl-8 py-2">
       <Title title={title} />
-      {contents.map((content, ind) => (
+      {posts.map((post, ind) => (
         <article className="mt-2 mb-8 text-sm text-zinc-700" key={ind}>
-          <CrlfLines lines={content} key={ind} />
+          <CrlfLines lines={post} key={ind} />
         </article>
       ))}
       <AlignRightButtons>

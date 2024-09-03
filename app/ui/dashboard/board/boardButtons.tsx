@@ -13,12 +13,18 @@ function MakeEdit({ href }: { href: string }) {
   );
 }
 
-export function EditTitle({ id }: { id: string }) {
-  const href = `/dashboard/edit/portfolio/${id}/title`;
+export function EditTitleLink({ boardId }: { boardId: string }) {
+  const href = `/dashboard/edit/board/${boardId}/title`;
   return <MakeEdit href={href} />;
 }
 
-export function EditParagraph({ id, pgId }: { id: string; pgId: number }) {
-  const href = `/dashboard/edit/portfolio/${id}/paragraph/${pgId}`;
+export function EditHistoryLink({
+  boardId,
+  historyId,
+}: {
+  boardId: string;
+  historyId: number;
+}) {
+  const href = `/dashboard/edit/board/${boardId}/history/${historyId}`;
   return <MakeEdit href={href} />;
 }

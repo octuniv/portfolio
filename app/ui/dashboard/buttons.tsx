@@ -1,10 +1,10 @@
 import {
-  addPfParagraph,
+  addHistory,
   createParagraph,
-  createPortfolio,
+  createBoard,
   deleteParagraph,
-  deletePfParagraph,
-  deletePortfolio,
+  deleteHistory,
+  deleteBoard,
 } from "@/app/lib/action";
 import {
   PencilSquareIcon,
@@ -75,49 +75,47 @@ export function DeleteParagraph({ id }: { id: string }) {
   );
 }
 
-export function EditPortfolio({ id }: { id: string }) {
-  const href = `/dashboard/edit/portfolio/${id}`;
+export function EditBoard({ id }: { id: string }) {
+  const href = `/dashboard/edit/board/${id}`;
   return <MakeEditButton href={href} />;
 }
 
-export function CreatePortfolio() {
-  return <MakeCreateButton action={createPortfolio} />;
+export function CreateBoard() {
+  return <MakeCreateButton action={createBoard} />;
 }
 
-export function DeletePortfolio({ id }: { id: string }) {
-  const deletePortfolioWithId = deletePortfolio.bind(null, id);
+export function DeleteBoard({ id }: { id: string }) {
+  const deleteBoardWithId = deleteBoard.bind(null, id);
   return (
     <MakeFormButton
-      action={deletePortfolioWithId}
+      action={deleteBoardWithId}
       ButtonShape={DeleteButtonShape}
     />
   );
 }
 
-export function AddPfParagraph({ id }: { id: string }) {
-  const AddPfParagraphWithId = addPfParagraph.bind(null, id);
+export function AddHistory({ id }: { id: string }) {
+  const AddHistoryWithId = addHistory.bind(null, id);
   const addButton = () => (
     <button className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
       <span className="hidden md:block">Add Board</span>{" "}
       <PlusIcon className="h-5 md:ml-4" />
     </button>
   );
-  return (
-    <MakeFormButton action={AddPfParagraphWithId} ButtonShape={addButton} />
-  );
+  return <MakeFormButton action={AddHistoryWithId} ButtonShape={addButton} />;
 }
 
-export function DeletePfParagraph({
-  pfId,
-  pgId,
+export function DeleteHistory({
+  boardId,
+  historyId,
 }: {
-  pfId: string;
-  pgId: number;
+  boardId: string;
+  historyId: number;
 }) {
-  const deletePfParagraphWithId = deletePfParagraph.bind(null, pfId, pgId);
+  const deleteHistoryWithId = deleteHistory.bind(null, boardId, historyId);
   return (
     <MakeFormButton
-      action={deletePfParagraphWithId}
+      action={deleteHistoryWithId}
       ButtonShape={DeleteButtonShape}
     />
   );
