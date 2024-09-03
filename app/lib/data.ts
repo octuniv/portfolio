@@ -13,6 +13,7 @@ import {
   getBoardFromServer,
   getHistoryFromServer,
   getParagraphFromServer,
+  compareByCreateAtTime,
 } from "./util";
 
 export async function fetchUser(): Promise<User> {
@@ -24,7 +25,7 @@ export async function fetchUser(): Promise<User> {
 export async function fetchParagraphs(): Promise<Paragraph[]> {
   const address = httpServerAddress + "/paragraphs";
   const data: ParagraphDto[] = await fetch(address).then((res) => res.json());
-  return data.map((paragDto: ParagraphDto) => getParagraphFromServer(paragDto));
+  return data.map((paragDto: ParagraphDto) => getParagraphFromServer(paragDto)).sort(compareByCreateAtTime);
 }
 
 export async function fetchParagraphById(id: string) {
@@ -36,7 +37,7 @@ export async function fetchParagraphById(id: string) {
 export async function fetchBoards(): Promise<Board[]> {
   const address = httpServerAddress + "/boards";
   const data: BoardDto[] = await fetch(address).then((res) => res.json());
-  return data.map((boardElem) => getBoardFromServer(boardElem));
+  return data.map((boardElem) => getBoardFromServer(boardElem)).sort(compareByCreateAtTime);
 }
 
 export async function fetchBoardById(boardId: string): Promise<Board> {
