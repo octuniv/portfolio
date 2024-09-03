@@ -1,7 +1,6 @@
-import { query } from "@/config/db";
 import {
   Paragraph,
-  ParagraphDB,
+  ParagraphDto,
   Board,
   UserDto,
   BoardDto,
@@ -10,10 +9,10 @@ import {
 } from "./definition";
 import {
   httpServerAddress,
-  convertDBToPage,
   getUserFromServer,
   getBoardFromServer,
   getHistoryFromServer,
+  getParagraphFromServer,
 } from "./util";
 
 export async function fetchUser(): Promise<User> {
@@ -22,34 +21,16 @@ export async function fetchUser(): Promise<User> {
   return getUserFromServer(data[0]);
 }
 
-export async function fetchParagraphs() {
-  const { convParagraph } = convertDBToPage();
-  const queryText = `SELECT id, title, content FROM paragraphs ORDER BY sequence ASC`;
-  try {
-    const queryRes = await query(queryText);
-
-    if (!queryRes?.rows) return [];
-
-    const result: Paragraph[] = queryRes.rows.map((res: ParagraphDB) => {
-      return convParagraph(res);
-    });
-    return result;
-  } catch (error) {
-    console.error("fetch Paragraphs Error :", Error);
-    return [];
-  }
+export async function fetchParagraphs(): Promise<Paragraph[]> {
+  const address = httpServerAddress + "/paragraphs";
+  const data: ParagraphDto[] = await fetch(address).then((res) => res.json());
+  return data.map((paragDto: ParagraphDto) => getParagraphFromServer(paragDto));
 }
 
 export async function fetchParagraphById(id: string) {
-  const { convParagraph } = convertDBToPage();
-  const queryText = `SELECT * from paragraphs WHERE id = $1`;
-  try {
-    const queryRes = await query(queryText, [id]);
-    return convParagraph(queryRes.rows[0]);
-  } catch (error) {
-    console.error("fetch Paragrah By #%d is Error", id);
-    return null;
-  }
+  const address = httpServerAddress + `/paragraphs/${id}`;
+  const data: ParagraphDto = await fetch(address).then((res) => res.json());
+  return getParagraphFromServer(data);
 }
 
 export async function fetchBoards(): Promise<Board[]> {

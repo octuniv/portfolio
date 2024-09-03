@@ -1,9 +1,8 @@
 import {
   Paragraph,
-  ParagraphDB,
+  ParagraphDto,
   HistoryProperty,
   Board,
-  sepLetter,
   User,
   UserDto,
   HistoryPropertyDiv,
@@ -42,48 +41,12 @@ export const getHistoryFromServer = (histElem: HistoryPropertyDto) => {
   } satisfies HistoryProperty;
 };
 
-export function convertDBToPage() {
-  const convParagraph = (data: ParagraphDB): Paragraph => {
-    return {
-      id: data.id,
-      title: data.title,
-      content: data.content.split(sepLetter),
-    };
-  };
-
-  // const convPortfolio = (
-  //   pfData: PortfolioDB,
-  //   pgDatas: HistoryPropertyInDB[]
-  // ): Board => {
-  //   return {
-  //     id: pfData.id,
-  //     title: pfData.title,
-  //     historys: pgDatas.map((pg) => {
-  //       return {
-  //         id: pg.id,
-  //         subtitle: pg.subtitle,
-  //         intro: pg.intro.split(sepLetter),
-  //         content: pg.content.split(sepLetter),
-  //       };
-  //     }),
-  //   };
-  // };
-
-  // return { convParagraph, convPortfolio };
-  return { convParagraph };
-}
-
-export function convertPageToDB() {
-  const convParagraph = (data: Paragraph): ParagraphDB => {
-    return {
-      id: data.id,
-      title: data.title,
-      content: data.content.join(sepLetter),
-    };
-  };
-
-  return { convParagraph };
-}
+export const getParagraphFromServer = (paragElem: ParagraphDto) => {
+  return {
+    ...paragElem,
+    posts: paragElem.posts.map((post) => post.post),
+  } satisfies Paragraph;
+};
 
 export function addKeysInBoardProperty(boards: HistoryProperty[]) {
   return boards.map(
@@ -103,27 +66,6 @@ export function addKeysInBoardProperty(boards: HistoryProperty[]) {
       }) satisfies HistoryPropertyDiv
   );
 }
-
-// export function convPgBoardDBToRaw(
-//   boardInDB: Omit<HistoryPropertyInDB, "portfolio_id">
-// ) {
-//   const { id, subtitle, intro, content } = boardInDB;
-//   return {
-//     id: id,
-//     subtitle: subtitle,
-//     intro: intro.split(sepLetter),
-//     content: content.split(sepLetter),
-//   } satisfies HistoryProperty;
-// }
-
-// export function convPgBoardRawToDB(board: Omit<HistoryProperty, "id">) {
-//   const { subtitle, intro, content } = board;
-//   return {
-//     subtitle: subtitle,
-//     intro: intro.join(sepLetter),
-//     content: content.join(sepLetter),
-//   } satisfies Omit<HistoryPropertyInDB, "portfolio_id" | "id">;
-// }
 
 export const makeKey = (index: number) => String(Date.now() * 10 + index);
 

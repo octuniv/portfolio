@@ -1,5 +1,3 @@
-export const sepLetter = "^|^";
-
 export const userKeys = ["name", "email", "phone", "socialSites"] as const;
 
 export type User = {
@@ -23,13 +21,18 @@ export type SocialSiteDto = {
 export type Paragraph = {
   id: string;
   title: string;
-  content: string[];
+  createAt: string;
+  posts: string[];
 };
 
-export type ParagraphDB = {
-  id: string;
-  title: string;
-  content: string;
+export type ParagraphDto = Omit<Paragraph, "posts"> & {
+  posts: PostDto[];
+};
+
+type PostDto = {
+  id: number;
+  post: string;
+  parag_id: string;
 };
 
 export type HistoryProperty = {

@@ -1,16 +1,15 @@
 "use server";
 
 import { z } from "zod";
-import { convertPageToDB, httpServerAddress } from "./util";
-import { query, Client } from "@/config/db";
+import { httpServerAddress } from "./util";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Board, HistoryProperty, User, userKeys } from "./definition";
+import { Board, HistoryProperty, Paragraph, User } from "./definition";
 
 const paragraphSchema = z.object({
   id: z.string(),
   title: z.coerce.string().min(1, { message: `Don't empty title.` }),
-  content: z
+  posts: z
     .array(z.coerce.string())
     .nonempty({ message: `Don't you enter your content?` }),
 });
@@ -18,7 +17,7 @@ const paragraphSchema = z.object({
 export type ParagraphState = {
   errors?: {
     title?: string[];
-    content?: string[];
+    posts?: string[];
   };
   message?: string | null;
 };
@@ -32,8 +31,8 @@ export async function updateParagraph(
 ) {
   const validatedFields = EditParagraph.safeParse({
     title: formData.get("title"),
-    content: formData
-      .getAll("content")
+    posts: formData
+      .getAll("post")
       .filter((ct) => typeof ct === "string" && ct.length > 0),
   });
 
@@ -44,47 +43,66 @@ export async function updateParagraph(
     };
   }
 
-  const { title, content } = validatedFields.data;
-  const { convParagraph } = convertPageToDB();
-  const params = convParagraph({ id, title, content });
+  const params: Pick<Paragraph, "title" | "posts"> = validatedFields.data;
 
-  const queryText = `
-        UPDATE paragraphs
-        SET title = $1, content = $2
-        WHERE id = $3
-    `;
+  const reqAddress = httpServerAddress + `/paragraphs/update/${id}`;
+  const res = await fetch(reqAddress, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
+  const result = await res.json();
 
-  try {
-    await query(queryText, [params.title, params.content, params.id]);
-  } catch (error) {
-    return { message: "Database Error: Failed to update paragraph" };
+  if (result?.error) {
+    if (result.error === "Not Found" || result?.statusCode === 404) {
+      throw new Error(`Invalid ParagraphId : ${id}`);
+    } else if (result.error === "Bad Request" || result?.statusCode === 400) {
+      throw new Error("Paragraph Entity you sent has something wrong");
+    } else {
+      throw new Error(result.error);
+    }
   }
-
   revalidatePath(`/dashboard`);
   redirect(`/dashboard`);
 }
 
 export async function createParagraph() {
-  const queryText = `INSERT INTO paragraphs (title, content) values ('NEW', 'NEW')`;
-
-  try {
-    await query(queryText);
-  } catch (error) {
-    console.error("You can`t create paragraph because of db errors");
-    throw error;
+  const reqAddress = httpServerAddress + "/paragraphs";
+  const newContent = {
+    title: "NEW Paragraph",
+  } satisfies Pick<Paragraph, "title">;
+  const res = await fetch(reqAddress, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newContent),
+  });
+  const result = await res.json();
+  if (result?.error) {
+    if (result.error === "Bad Request" || result?.statusCode === 400) {
+      throw new Error("Invalid data was sended");
+    } else {
+      throw new Error(result.error);
+    }
   }
   revalidatePath(`/dashboard`);
 }
 
 export async function deleteParagraph(id: string) {
-  const queryText = `DELETE FROM paragraphs WHERE id = $1`;
-  const params = [id];
-
-  try {
-    await query(queryText, params);
-  } catch (error) {
-    console.error("Database Error : Failed to delete paragraph");
-    throw Error;
+  const reqAddress = httpServerAddress + `/paragraphs/delete/${id}`;
+  const res = await fetch(reqAddress, {
+    method: "DELETE",
+  });
+  const result = await res.json();
+  if (result?.error) {
+    if (result?.statusCode === 404 || result?.error === "Not Found") {
+      throw new Error("This Paragraph Entity already not existed!");
+    } else {
+      throw new Error(result.error);
+    }
   }
   revalidatePath(`/dashboard`);
 }
