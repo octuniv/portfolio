@@ -24,7 +24,7 @@ export const getBoardFromServer = (boardElem: BoardDto) => {
   return {
     id: boardElem.id,
     title: boardElem.title,
-    createdAt: boardElem.createdAt,
+    createAt: boardElem.createAt,
     historys: boardElem.historys.map((histElem) =>
       getHistoryFromServer(histElem)
     ),

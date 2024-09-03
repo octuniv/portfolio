@@ -63,7 +63,7 @@ type HistoryPropDBInfo = {
 export type Board = {
   id: string;
   title: string;
-  createdAt: string;
+  createAt: string;
   historys: HistoryProperty[];
 };
 
