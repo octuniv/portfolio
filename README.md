@@ -21,7 +21,7 @@ devDependencies:
 @types/node 20.14.8                @types/react-dom 18.3.0            eslint 9.9.1                       postcss 8.4.44                     prettier-plugin-tailwindcss 0.6.6  typescript 5.5.2
 ```
 
-2. open httpsever for [this server](https://github.com/octuniv/pf-server)
+2. open httpserver from [this server](https://github.com/octuniv/pf-server)
 
 3. convert name .env.example to .env, and set your httpServer address
 
