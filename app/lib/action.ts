@@ -402,5 +402,6 @@ export async function updateUser(
   }
 
   revalidatePath(`/dashboard`);
+  revalidatePath(`/dashboard/edit/user`);
   redirect(`/dashboard`);
 }
