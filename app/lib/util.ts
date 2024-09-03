@@ -5,7 +5,7 @@ import {
   Board,
   sepLetter,
   User,
-  UserDB,
+  UserDto,
   HistoryPropertyDiv,
   BoardDto,
   HistoryPropertyDto,
@@ -127,21 +127,12 @@ export function addKeysInBoardProperty(boards: HistoryProperty[]) {
 
 export const makeKey = (index: number) => String(Date.now() * 10 + index);
 
-export function getUserFromDB(userDB: UserDB): User {
+export function getUserFromServer(userDto: UserDto): User {
   return {
-    id: userDB.id,
-    name: userDB.name,
-    email: userDB.email,
-    phone: userDB.phone,
-    socialSites: userDB.socialsites.split(sepLetter),
-  };
-}
-
-export function sendUserToDB(user: Omit<User, "id">): Omit<UserDB, "id"> {
-  return {
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    socialsites: user.socialSites.join(sepLetter) || "",
+    id: userDto.id,
+    name: userDto.name,
+    email: userDto.email,
+    phone: userDto.phone,
+    socialSites: userDto.socialSites.map((site) => site.url),
   };
 }

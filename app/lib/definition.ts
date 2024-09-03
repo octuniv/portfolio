@@ -10,12 +10,18 @@ export type User = {
   socialSites: string[];
 };
 
-export type UserDB = {
+export type UserDto = {
   id: string;
   name: string;
   email: string;
   phone: string;
-  socialsites: string;
+  socialSites: SocialSiteDto[];
+};
+
+export type SocialSiteDto = {
+  id?: number;
+  url: string;
+  user_id?: string;
 };
 
 export type Paragraph = {

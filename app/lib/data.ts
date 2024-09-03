@@ -3,30 +3,23 @@ import {
   Paragraph,
   ParagraphDB,
   Board,
-  UserDB,
+  UserDto,
   BoardDto,
   HistoryPropertyDto,
+  User,
 } from "./definition";
 import {
   httpServerAddress,
   convertDBToPage,
-  getUserFromDB,
+  getUserFromServer,
   getBoardFromServer,
   getHistoryFromServer,
 } from "./util";
 
-export async function fetchUser() {
-  const queryText = `SELECT id, name, email, phone, socialsites FROM users`;
-  try {
-    const user = await query(queryText);
-
-    if (!user?.rows) throw Error(`You can't find user information!`);
-
-    return getUserFromDB(user.rows[0] satisfies UserDB);
-  } catch (error) {
-    console.error("fetch User Error :", Error);
-    throw Error;
-  }
+export async function fetchUser(): Promise<User> {
+  const address = httpServerAddress + "/users";
+  const data: UserDto[] = await fetch(address).then((res) => res.json());
+  return getUserFromServer(data[0]);
 }
 
 export async function fetchParagraphs() {

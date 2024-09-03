@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { convertPageToDB, httpServerAddress, sendUserToDB } from "./util";
+import { convertPageToDB, httpServerAddress } from "./util";
 import { query, Client } from "@/config/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -324,6 +324,9 @@ const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
 );
 
+const urlRegex = new RegExp(
+  /^http(s)?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/
+);
 const UserSchema = z.object({
   name: z.coerce.string().min(1, { message: "Do not empty your name" }),
   email: z.coerce.string().email({ message: "Keep the email format" }),
@@ -331,7 +334,9 @@ const UserSchema = z.object({
     .string()
     .regex(phoneRegex, "You should input valid phone number!"),
   socialSites: z
-    .array(z.coerce.string())
+    .array(
+      z.coerce.string().regex(urlRegex, "You should input valid url form!")
+    )
     .nonempty({ message: "Enter your socialSites." }),
 });
 
@@ -356,22 +361,26 @@ export async function updateUser(
     };
   }
 
-  const params = sendUserToDB(validatedFields.data);
+  const params = validatedFields.data;
 
-  const queryText = `UPDATE users
-        SET name = $1, email = $2, phone = $3, socialsites = $4
-        WHERE id = $5`;
+  const reqAddress = httpServerAddress + `/users/update/${id}`;
+  const res = await fetch(reqAddress, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
+  const result = await res.json();
 
-  try {
-    await query(queryText, [
-      params.name,
-      params.email,
-      params.phone,
-      params.socialsites,
-      id,
-    ]);
-  } catch (error) {
-    return { message: "DB Error : Fail to update userinfo" };
+  if (result?.error) {
+    if (result.error === "Not Found" || result?.statusCode === 404) {
+      throw new Error(`Invalid UserId : ${id}`);
+    } else if (result.error === "Bad Request" || result?.statusCode === 400) {
+      throw new Error("User content has something wrong");
+    } else {
+      throw new Error(result.error);
+    }
   }
 
   revalidatePath(`/dashboard`);
