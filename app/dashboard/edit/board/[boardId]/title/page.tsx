@@ -11,7 +11,5 @@ export default async function Page({
   const title = await fetchBoardTitleById(boardId);
   if (!title) notFound();
 
-  console.log(title);
-
   return <EditForm boardId={boardId} title={title} />;
 }

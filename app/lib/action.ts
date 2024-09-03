@@ -173,6 +173,7 @@ export async function addHistory(id: string) {
     }
   }
 
+  revalidatePath(`/dashboard`);
   revalidatePath(`/dashboard/edit/board/${id}`);
 }
 
@@ -227,6 +228,7 @@ export async function updateBoardTitle(
 
   const returnAddress = `/dashboard/edit/board/${boardId}`;
 
+  revalidatePath(`/dashboard`);
   revalidatePath(returnAddress);
   redirect(returnAddress);
 }
@@ -307,6 +309,7 @@ export async function updateHistory(
 
   const returnAddress = `/dashboard/edit/board/${boardId}`;
 
+  revalidatePath(`/dashboard`);
   revalidatePath(returnAddress);
   redirect(returnAddress);
 }
@@ -326,6 +329,7 @@ export async function deleteHistory(boardId: string, historyId: number) {
     }
   }
   const returnAddress = `/dashboard/edit/board/${boardId}`;
+  revalidatePath(`/dashboard`);
   revalidatePath(returnAddress);
 }
 
