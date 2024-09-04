@@ -10,7 +10,7 @@ import {
   HistoryPropertyDto,
 } from "@/app/lib/definition";
 
-require('dotenv').config();
+require("dotenv").config();
 
 export const httpServerAddress = `${process.env.HTTP_SERVER_URL}`;
 
@@ -75,13 +75,4 @@ export function getUserFromServer(userDto: UserDto): User {
     phone: userDto.phone,
     socialSites: userDto.socialSites.map((site) => site.url),
   };
-}
-
-export function compareByCreateAtTime(frontElemHasCreateAt: {createAt: string}, backElemHasCreateAt: {createAt: string} ) {
-  const frontElemTime = Date.parse(frontElemHasCreateAt.createAt);
-  const backElemTime = Date.parse(backElemHasCreateAt.createAt);
-  if (isNaN(frontElemTime) || isNaN(backElemTime)) {
-    throw new Error(`Compare Time failed, front: ${frontElemHasCreateAt}, back: ${backElemHasCreateAt} `);
-  }
-  return frontElemTime - backElemTime;
 }
