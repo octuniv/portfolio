@@ -28,7 +28,7 @@ function BoardDisplay({
           {it}
         </p>
       ))}
-      <ul className="text-sm list-disc pl-4 space-y-1">
+      <ul className="text-sm list-disc pt-2 pl-4 pr-2 space-y-1">
         {contents.map((ct, ind) => (
           <li key={"content" + ind}>{ct}</li>
         ))}

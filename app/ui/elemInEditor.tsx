@@ -109,10 +109,7 @@ export function CrlfLines({ lines }: { lines: string }) {
   return (
     <>
       {lines.split(/(?:\r\n|\r|\n)/g).map((line, ind) => (
-        <Fragment key={ind}>
-          {line}
-          <br />
-        </Fragment>
+        <Fragment key={ind}>{line}</Fragment>
       ))}
     </>
   );

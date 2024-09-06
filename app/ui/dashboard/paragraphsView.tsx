@@ -18,7 +18,7 @@ function ParagraphComponent({ paragraph }: { paragraph: ParagraphType }) {
     <div className="relative rounded-3xl bg-emerald-50 pl-8 py-2">
       <Title title={title} />
       {posts.map((post, ind) => (
-        <article className="mt-2 mb-8 text-sm text-zinc-700" key={ind}>
+        <article className="mt-2 mb-4 mr-3 text-sm text-zinc-700" key={ind}>
           <CrlfLines lines={post} key={ind} />
         </article>
       ))}
