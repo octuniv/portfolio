@@ -16,7 +16,7 @@ type Input = {
 
 type Setter = Dispatch<SetStateAction<Input>>;
 
-export const makeInitState = (values: string[]) => {
+export const InitState = (values: string[]) => {
   return useState(
     values.map((v, i) => {
       return { value: v, key: makeKey(i) };
@@ -24,13 +24,13 @@ export const makeInitState = (values: string[]) => {
   );
 };
 
-export const makeAddClick =
+export const AddClick =
   (values: Input, setter: Setter) => (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setter([...values, { value: "", key: makeKey(values.length) }]);
   };
 
-export const makeRemoveClick =
+export const RemoveClick =
   (setter: Setter) =>
   (index: number) =>
   (event: MouseEvent<HTMLButtonElement>) => {
@@ -38,7 +38,7 @@ export const makeRemoveClick =
     setter((oldValues) => oldValues.filter((_, i) => i !== index));
   };
 
-export const makeInputBlur =
+export const InputBlur =
   <T extends HTMLTextAreaElement | HTMLInputElement>(
     values: Input,
     setter: Setter

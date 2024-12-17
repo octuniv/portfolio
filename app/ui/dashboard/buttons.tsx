@@ -12,6 +12,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { JSX } from "react";
 
 function MakeEditButton({ href }: { href: string }) {
   return (

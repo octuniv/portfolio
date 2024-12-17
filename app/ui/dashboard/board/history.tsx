@@ -6,10 +6,10 @@ import Link from "next/link";
 import { HistoryProperty } from "@/app/lib/definition";
 import { ErrorElem, LineInput, TextAreaInput } from "@/app/ui/elemInEditor";
 import {
-  makeAddClick,
-  makeInitState,
-  makeInputBlur,
-  makeRemoveClick,
+  AddClick,
+  InitState,
+  InputBlur,
+  RemoveClick,
 } from "@/app/lib/eventFactory";
 
 export default function History({
@@ -25,17 +25,17 @@ export default function History({
 }) {
   const returnAddress = `/dashboard/edit/board/${boardId}`;
   const { subtitle, intros, contents } = historyProperty;
-  const [inputIntro, setInputIntro] = makeInitState(intros);
-  const [inputCt, setInputCt] = makeInitState(contents);
+  const [inputIntro, setInputIntro] = InitState(intros);
+  const [inputCt, setInputCt] = InitState(contents);
 
-  const addIntroClick = makeAddClick(inputIntro, setInputIntro);
-  const addContentClick = makeAddClick(inputCt, setInputCt);
+  const addIntroClick = AddClick(inputIntro, setInputIntro);
+  const addContentClick = AddClick(inputCt, setInputCt);
 
-  const removeIntroClick = makeRemoveClick(setInputIntro);
-  const removeContentClick = makeRemoveClick(setInputCt);
+  const removeIntroClick = RemoveClick(setInputIntro);
+  const removeContentClick = RemoveClick(setInputCt);
 
-  const introInputBlur = makeInputBlur(inputIntro, setInputIntro);
-  const contentInputBlur = makeInputBlur(inputCt, setInputCt);
+  const introInputBlur = InputBlur(inputIntro, setInputIntro);
+  const contentInputBlur = InputBlur(inputCt, setInputCt);
 
   return (
     <form action={formAction}>

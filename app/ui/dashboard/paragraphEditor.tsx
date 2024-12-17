@@ -6,10 +6,10 @@ import { ParagraphState as ErrorState } from "@/app/lib/action";
 import { TextAreaInput, ErrorElem, LineInput } from "@/app/ui/elemInEditor";
 import Link from "next/link";
 import {
-  makeAddClick,
-  makeInitState,
-  makeInputBlur,
-  makeRemoveClick,
+  AddClick,
+  InitState,
+  InputBlur,
+  RemoveClick,
 } from "@/app/lib/eventFactory";
 
 export default function ParagraphEditor({
@@ -21,10 +21,10 @@ export default function ParagraphEditor({
   state: ErrorState;
   formAction: (payload: FormData) => void;
 }) {
-  const [posts, setPosts] = makeInitState(paragraph.posts);
-  const handleInputBlur = makeInputBlur<HTMLTextAreaElement>(posts, setPosts);
-  const handleRemoveClick = makeRemoveClick(setPosts);
-  const handleAddClick = makeAddClick(posts, setPosts);
+  const [posts, setPosts] = InitState(paragraph.posts);
+  const handleInputBlur = InputBlur<HTMLTextAreaElement>(posts, setPosts);
+  const handleRemoveClick = RemoveClick(setPosts);
+  const handleAddClick = AddClick(posts, setPosts);
 
   return (
     <form action={formAction}>

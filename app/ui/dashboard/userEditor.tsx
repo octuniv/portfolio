@@ -6,10 +6,10 @@ import { ErrorElem, LineInput } from "@/app/ui/elemInEditor";
 import { FocusEvent } from "react";
 import Link from "next/link";
 import {
-  makeAddClick,
-  makeInitState,
-  makeInputBlur,
-  makeRemoveClick,
+  AddClick,
+  InitState,
+  InputBlur,
+  RemoveClick,
 } from "@/app/lib/eventFactory";
 
 function EditElem({
@@ -44,13 +44,10 @@ export default function UserEditor({
 }) {
   const { name, email, phone, socialSites: defSites } = user;
 
-  const [socialSites, setSocialSites] = makeInitState(defSites);
-  const handleBlur = makeInputBlur<HTMLInputElement>(
-    socialSites,
-    setSocialSites
-  );
-  const handleRemoveClick = makeRemoveClick(setSocialSites);
-  const handleAddClick = makeAddClick(socialSites, setSocialSites);
+  const [socialSites, setSocialSites] = InitState(defSites);
+  const handleBlur = InputBlur<HTMLInputElement>(socialSites, setSocialSites);
+  const handleRemoveClick = RemoveClick(setSocialSites);
+  const handleAddClick = AddClick(socialSites, setSocialSites);
 
   const returnAddress = "/dashboard";
   return (
